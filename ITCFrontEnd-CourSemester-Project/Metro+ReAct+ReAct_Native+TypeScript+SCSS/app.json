@@ -1,4 +1,8 @@
 {
   "name": "magicboard",
-  "displayName": "magicboard"
+  "displayName": "magicboard",
+  "plugins": [
+    "expo-router",
+    "expo-status-bar"
+  ]
 }
