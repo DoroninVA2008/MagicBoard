@@ -11,7 +11,7 @@ const config = {
     sourceExts: [...sourceExts, "scss", "sass"],
   },
   server: {
-    port: 1449,
+    port: 1439,
     open: true,
     host: true,
   },
