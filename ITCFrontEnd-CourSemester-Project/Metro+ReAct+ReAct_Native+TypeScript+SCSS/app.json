@@ -9,6 +9,9 @@
     ],
     "web": {
       "bundler": "metro"
+    },
+    "android": {
+      "package": "com.doroninva2008.magicboard"
     }
   }
 }
