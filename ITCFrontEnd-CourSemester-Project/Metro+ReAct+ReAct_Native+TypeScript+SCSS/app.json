@@ -1,8 +1,14 @@
 {
-  "name": "magicboard",
-  "displayName": "magicboard",
-  "plugins": [
-    "expo-router",
-    "expo-status-bar"
-  ]
+  "expo": {
+    "name": "magicboard",
+    "slug": "magicboard",
+    "scheme": "magicboard",
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ],
+    "web": {
+      "bundler": "metro"
+    }
+  }
 }
