@@ -5,7 +5,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
 import { PaperProvider } from 'react-native-paper'
-import Home from '../screens/home'
+import Home from '../screens/home/home'
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';

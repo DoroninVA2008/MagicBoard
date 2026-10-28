@@ -12,6 +12,16 @@
     },
     "android": {
       "package": "com.doroninva2008.magicboard"
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "0779caa4-ed71-443f-9fa7-aeb58f48778a"
+      }
     }
   }
 }
