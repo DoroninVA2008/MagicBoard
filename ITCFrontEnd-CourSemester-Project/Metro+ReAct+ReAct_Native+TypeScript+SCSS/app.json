@@ -5,7 +5,8 @@
     "scheme": "magicboard",
     "plugins": [
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      "react-native-ble-plx"
     ],
     "web": {
       "bundler": "metro"
