@@ -1,4 +1,4 @@
-import React from 'react'
+import ReAct from 'react'
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native'
 import {
   SafeAreaProvider,
@@ -7,7 +7,7 @@ import {
 import { PaperProvider } from 'react-native-paper'
 import Home from '../screens/home/home'
 
-export default function App() {
+const App: ReAct.FC = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
