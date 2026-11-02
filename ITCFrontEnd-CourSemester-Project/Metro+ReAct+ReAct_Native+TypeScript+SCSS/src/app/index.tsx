@@ -1,37 +1,38 @@
-import ReAct from 'react'
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native'
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
-import { PaperProvider } from 'react-native-paper'
-import Home from '../screens/home/home'
+// react imports
+import { createStackNavigator } from "@react-navigation/stack";
+import { View } from "react-native";
+// import pages
+import Home from "@/pages/home/ui/home";
+import { Management } from "@/pages/manegement/management";
+import { ScreenOfTale } from "@/pages/screen-of-tale/ui";
 
-const App: ReAct.FC = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+type RootStackParamList = {
+  HomeScreen: undefined,
+  ManagementScreen: { imageUrl: string; name: string; author: string },
+  TaleScreen: { imageUrl: string; name: string; author: string },
+};
 
+const Index = () => {
+  const Stack = createStackNavigator<RootStackParamList>()
+  
   return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <AppContent />
-      </PaperProvider>
-    </SafeAreaProvider>
-  );
+      <View style={{ flex: 1 }}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+            name="HomeScreen"
+            component={Home}
+          />
+          <Stack.Screen
+            name="ManagementScreen"
+            component={Management}
+          />
+          <Stack.Screen
+            name="TaleScreen"
+            component={ScreenOfTale}
+          />
+        </Stack.Navigator>
+      </View>
+  )
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
-      <Home />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+export default Index

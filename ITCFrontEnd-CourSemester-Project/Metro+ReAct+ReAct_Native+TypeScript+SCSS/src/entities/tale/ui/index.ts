@@ -1,0 +1,1 @@
+export { Tale } from './Tale'

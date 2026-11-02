@@ -1,0 +1,1 @@
+export { useTale } from './use-tale'
