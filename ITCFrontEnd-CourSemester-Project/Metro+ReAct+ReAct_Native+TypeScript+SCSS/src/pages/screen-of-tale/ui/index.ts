@@ -1,0 +1,1 @@
+export { ScreenOfTale } from "./screen-of-tale"

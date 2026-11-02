@@ -1,0 +1,26 @@
+{
+    "tale": [
+        {
+            "forName": "Для всей семьи",
+            "linkAll": "https://"
+        },
+        {
+            "id": 1,
+            "imageUrl": "https://www.radionetplus.ru/uploads/posts/2013-12/1387478876_krasivye-fotki-1.jpeg",
+            "name": "Красная шапочка",
+            "author": "Шарль Перро"
+        },
+        {
+            "id": 2,
+            "imageUrl": "https://www.radionetplus.ru/uploads/posts/2013-12/thumbs/1387478932_krasivye-fotki-1.jpg",
+            "name": "Винни-Пух",
+            "author": "Алан Милн"
+        },
+        {
+            "id": 3,
+            "imageUrl": "https://www.radionetplus.ru/uploads/posts/2013-12/thumbs/1387478932_krasivye-fotki-1.jpg",
+            "name": "Золотой ключик",
+            "author": "Алексей Толстой"
+        }
+    ]
+}
