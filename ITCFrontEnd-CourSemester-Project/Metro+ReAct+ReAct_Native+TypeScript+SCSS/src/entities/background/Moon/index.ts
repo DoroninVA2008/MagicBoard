@@ -1,1 +1,1 @@
-export { BackgroundMoon } from "./BackgroundMoon";
+export { BackgroundMoon } from './BackgroundMoon'

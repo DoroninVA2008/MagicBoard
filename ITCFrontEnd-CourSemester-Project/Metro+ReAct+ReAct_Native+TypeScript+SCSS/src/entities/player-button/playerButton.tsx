@@ -1,8 +1,8 @@
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import Inactiveplayer from '@/shared/images/in_active-player.svg';
-import Activeplayer from '@/shared/images/active-player.svg';
-import MusicSlider from './MusicSlider';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { useState } from 'react'
+import Inactiveplayer from '@/shared/images/in_active-player.svg'
+import Activeplayer from '@/shared/images/active-player.svg'
+import MusicSlider from './MusicSlider'
 
 interface PlayerButtonProps {
   onCommand?: (cmd: string) => void; // Пропс для отправки команд
@@ -36,3 +36,23 @@ export const PlayerButton = ({ onCommand }: PlayerButtonProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    marginTop: 30
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+  },
+  timeText: {
+    fontSize: 16,
+    marginTop: 20,
+    color: '#666666',
+  },
+});

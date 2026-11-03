@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   PanResponder,
   GestureResponderEvent,
   PanResponderGestureState,
-} from 'react-native';
+} from 'react-native'
 
 interface MusicSliderProps {
   duration: number; // длительность в миллисекундах

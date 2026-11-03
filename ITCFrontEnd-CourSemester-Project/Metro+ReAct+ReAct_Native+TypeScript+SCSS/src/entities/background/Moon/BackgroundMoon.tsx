@@ -1,5 +1,5 @@
-import Star from "@/shared/images/star.svg"
-import Moon from "@/shared/images/moon.svg"
+import Star from '@/shared/images/star.svg'
+import Moon from '@/shared/images/moon.svg'
 
 export const BackgroundMoon = () => {
     return (
