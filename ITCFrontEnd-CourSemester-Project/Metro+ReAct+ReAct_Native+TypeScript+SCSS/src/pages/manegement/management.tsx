@@ -27,9 +27,10 @@ export const Management = ({ route }: taleListProps) => {
   } = route.params || {};
 
   const dateLogin = new Date().getHours();
-  const { status, battery } = useBle(); // Подключаем хук
+  const { status, battery, progress, duration, isPlaying, sendCommand, seek } = useBle();
+  const [showConnect, setShowConnect] = useState(false);
 
-  return (
+    return (
     <View style={{ flex: 1, backgroundColor: dateLogin < 19 && dateLogin > 7 ? COLORS.HOME_BACKGROUND_SUN : COLORS.HOME_BACKGROUND_MOON }}>
       {dateLogin < 19 && dateLogin > 7 ? <BackgroundSun /> : <BackgroundMoon />}
       
@@ -44,11 +45,20 @@ export const Management = ({ route }: taleListProps) => {
           {/* Уровень заряда */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
             <BatteryIcon width={20} height={20} />
+            <Text>
+              {status === 'connected' ? 'Подключено' : status === 'connecting' ? 'Соединение…' : 'Не подключено'}
+            </Text>
             <Text style={{ color: COLORS.TEXT, fontSize: 12 }}>
               {battery !== null ? `${battery}%` : '--'}
             </Text>
           </View>
         </View>
+
+        {status !== 'connected' && (
+          <TouchableOpacity onPress={() => setShowConnect(true)}>
+            <Text>Подключиться</Text>
+          </TouchableOpacity>
+        )}
 
         <Text style={{ fontSize: 16, fontWeight: '700', color: COLORS.TEXT }}>Magic Board 1v</Text>
         
@@ -71,11 +81,20 @@ export const Management = ({ route }: taleListProps) => {
               </View>
             </View>
             <View style={{ marginHorizontal: 'auto', marginTop: 15 }}>
-              <PlayerButton onCommand={sendCommand} />
+              <PlayerButton
+                onCommand={sendCommand}
+                isPlaying={isPlaying}
+                duration={duration}
+                progress={progress}
+                onSeek={seek}
+              />
             </View>
           </View>
         </View>
       </View>
+      <Modal visible={showConnect} onRequestClose={() => setShowConnect(false)}>
+        {/* тот же компонент Connection, но как модалка */}
+      </Modal>
       <Footer />
     </View>
   );
