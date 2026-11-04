@@ -1,107 +1,75 @@
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  View,
-  StyleSheet,
-  Animated,
-  PanResponder,
-  GestureResponderEvent,
-  PanResponderGestureState,
-} from 'react-native'
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated, PanResponder, GestureResponderEvent, PanResponderGestureState } from 'react-native';
 
 interface MusicSliderProps {
-  duration: number; // длительность в миллисекундах
-  isActive: boolean; // запустить/остановить ползунок
-  onProgressChange?: (progress: number) => void; // callback при изменении прогресса
+  duration: number;
+  isActive: boolean;
+  initialProgress?: number;  // 0..1
+  onProgressChange?: (ratio: number) => void;  // 0..1
 }
+
+const SLIDER_WIDTH = 300;
+const THUMB_SIZE = 20;
 
 const MusicSlider: React.FC<MusicSliderProps> = ({
   duration,
   isActive,
+  initialProgress = 0,
   onProgressChange,
 }) => {
-  const [progress, setProgress] = useState(0); // прогресс от 0 до 1
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const [progress, setProgress] = useState(initialProgress);
+  const animatedValue = useRef(new Animated.Value(initialProgress)).current;
   const startTimeRef = useRef<number | null>(null);
-  const pausedProgressRef = useRef(0);
-  const animationRef = useRef<NodeJS.Timeout | null>(null);
+  const pausedProgressRef = useRef(initialProgress);
+  const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const SLIDER_WIDTH = 300;
-  const THUMB_SIZE = 20;
-
-  // Настройка PanResponder для ручного управления
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
-        // Останавливаем анимацию при касании
-        if (animationRef.current) {
-          clearInterval(animationRef.current);
-        }
+        if (animationRef.current) clearInterval(animationRef.current);
       },
-      onPanResponderMove: (
-        evt: GestureResponderEvent,
-        gestureState: PanResponderGestureState
-      ) => {
-        const newProgress = Math.max(
-          0,
-          Math.min(
-            1,
-            (gestureState.moveX - 50) / SLIDER_WIDTH
-          )
-        );
-        setProgress(newProgress);
-        pausedProgressRef.current = newProgress;
-        animatedValue.setValue(newProgress);
-        onProgressChange?.(newProgress);
+      onPanResponderMove: (_e: GestureResponderEvent, g: PanResponderGestureState) => {
+        const ratio = Math.max(0, Math.min(1, (g.moveX - 50) / SLIDER_WIDTH));
+        setProgress(ratio);
+        pausedProgressRef.current = ratio;
+        animatedValue.setValue(ratio);
+        onProgressChange?.(ratio);
       },
       onPanResponderRelease: () => {
-        // Возобновляем анимацию, если isActive === true
         if (isActive && progress < 1) {
           startTimeRef.current = Date.now() - progress * duration;
         }
       },
-    })
+    }),
   ).current;
 
-  // Основная логика анимации
   useEffect(() => {
     if (isActive && duration > 0) {
-      // Запускаем ползунок
       startTimeRef.current = Date.now() - pausedProgressRef.current * duration;
-
       animationRef.current = setInterval(() => {
-        const elapsed = Date.now() - (startTimeRef.current || Date.now());
-        const newProgress = Math.min(1, elapsed / duration);
-
-        setProgress(newProgress);
-        pausedProgressRef.current = newProgress;
-        animatedValue.setValue(newProgress);
-        onProgressChange?.(newProgress);
-
-        // Останавливаем, когда достигли конца
-        if (newProgress >= 1) {
-          if (animationRef.current) {
-            clearInterval(animationRef.current);
-          }
-        }
-      }, 16); // ~60 FPS
-
-      return () => {
-        if (animationRef.current) {
-          clearInterval(animationRef.current);
-        }
-      };
+        const elapsed = Date.now() - (startTimeRef.current ?? Date.now());
+        const next = Math.min(1, elapsed / duration);
+        setProgress(next);
+        pausedProgressRef.current = next;
+        animatedValue.setValue(next);
+        onProgressChange?.(next);
+        if (next >= 1 && animationRef.current) clearInterval(animationRef.current);
+      }, 16);
+      return () => { if (animationRef.current) clearInterval(animationRef.current); };
     } else {
-      // Паузируем ползунок
-      if (animationRef.current) {
-        clearInterval(animationRef.current);
-      }
+      if (animationRef.current) clearInterval(animationRef.current);
       pausedProgressRef.current = progress;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, duration]);
 
-  // Вычисляем позицию ползунка
+  useEffect(() => {
+    animatedValue.setValue(initialProgress);
+    setProgress(initialProgress);
+  }, [initialProgress, animatedValue]);
+
   const thumbPosition = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, SLIDER_WIDTH - THUMB_SIZE],
@@ -109,75 +77,24 @@ const MusicSlider: React.FC<MusicSliderProps> = ({
 
   return (
     <View style={styles.container}>
-      <View
-        style={styles.sliderTrack}
-        {...panResponder.panHandlers}
-      >
-        {/* Фон прогресса */}
+      <View style={styles.sliderTrack} {...panResponder.panHandlers}>
         <Animated.View
           style={[
             styles.progressBar,
-            {
-              width: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0%', '100%'],
-              }),
-            },
+            { width: animatedValue.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
           ]}
         />
-
-        {/* Ползунок (thumb) */}
-        <Animated.View
-          style={[
-            styles.thumb,
-            {
-              transform: [{ translateX: thumbPosition }],
-            },
-          ]}
-        />
+        <Animated.View style={[styles.thumb, { transform: [{ translateX: thumbPosition }] }]} />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  sliderTrack: {
-    width: 300,
-    height: 9,
-    backgroundColor: '#7A7A7A',
-    borderRadius: 20,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    position: 'relative',
-  },
-  progressBar: {
-    height: 9,
-    backgroundColor: '#F4FAFF', //123123
-    borderRadius: 20,
-    position: 'absolute',
-    left: 0,
-    top: '50%',
-    marginTop: -5,
-  },
-  thumb: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#181818', //0
-    borderRadius: 10,
-    position: 'absolute',
-    top: '50%',
-    marginTop: -10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
+  container: { justifyContent: 'center', alignItems: 'center', paddingVertical: 20 },
+  sliderTrack: { width: SLIDER_WIDTH, height: 9, backgroundColor: '#7A7A7A', borderRadius: 20, justifyContent: 'center', paddingHorizontal: 10, position: 'relative' },
+  progressBar: { height: 9, backgroundColor: '#F4FAFF', borderRadius: 20, position: 'absolute', left: 0, top: '50%', marginTop: -5 },
+  thumb: { width: 20, height: 20, backgroundColor: '#181818', borderRadius: 10, position: 'absolute', top: '50%', marginTop: -10 },
 });
 
 export default MusicSlider;

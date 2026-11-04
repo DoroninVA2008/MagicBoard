@@ -20,14 +20,16 @@ export default () => {
   const dateLogin = new Date().getHours()
 
   return (
-    <View style={{ flex: 1, 
-      backgroundColor: 
+    <View style={{
+      flex: 1,
+      backgroundColor:
         (dateLogin < 19 && dateLogin > 7)
-          ? COLORS.HOME_BACKGROUND_SUN 
-          : COLORS.HOME_BACKGROUND_MOON }}>
-      {(dateLogin < 19 && dateLogin > 7) ? <BackgroundSun/> : <BackgroundMoon/>}
-      <TouchableOpacity style={{marginHorizontal: 'auto', paddingTop: 40}}>
-        <Search/>
+          ? COLORS.HOME_BACKGROUND_SUN
+          : COLORS.HOME_BACKGROUND_MOON
+    }}>
+      {(dateLogin < 19 && dateLogin > 7) ? <BackgroundSun /> : <BackgroundMoon />}
+      <TouchableOpacity style={{ marginHorizontal: 'auto', paddingTop: 40 }}>
+        <Search />
       </TouchableOpacity>
       <ScrollView>
         <View style={{ marginTop: 30, marginHorizontal: "6%" }}>
@@ -38,17 +40,20 @@ export default () => {
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ columnGap: 20, }}
-            style={{marginVertical: 10}}
+            contentContainerStyle={{ columnGap: 20 }}
+            style={{ marginVertical: 10 }}
           >
-            {dataTale.map((item) => (
-              <TouchableOpacity onPress={() => {
-                navigation.navigate("TaleScreen", {
-                  imageUrl: item.imageUrl,
-                  name: item.name,
-                  author: item.author
-                })
-              } }>
+            {dataTale.map((item: any, index: number) => (
+              <TouchableOpacity
+                key={item.id ? String(item.id) : `${item.name}-${index}`}
+                onPress={() => {
+                  navigation.navigate("TaleScreen", {
+                    imageUrl: item.imageUrl,
+                    name: item.name,
+                    author: item.author
+                  })
+                }}
+              >
                 <Tale imageUrl={item.imageUrl} name={item.name} author={item.author} />
               </TouchableOpacity>
             ))}
