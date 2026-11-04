@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from 'react-native'
+import { PermissionsAndroid, Platform } from 'react-native';
 
 export async function requestBlePermissions(): Promise<boolean> {
   if (Platform.OS !== 'android') return true;
@@ -7,7 +7,7 @@ export async function requestBlePermissions(): Promise<boolean> {
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
     ]);
-    return Object.values(res).every(v => v === PermissionsAndroid.RESULTS.GRANTED);
+    return Object.values(res).every((v) => v === PermissionsAndroid.RESULTS.GRANTED);
   }
   const res = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,

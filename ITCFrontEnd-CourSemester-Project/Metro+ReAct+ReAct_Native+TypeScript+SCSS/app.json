@@ -44,27 +44,21 @@
       "favicon": "./src/shared/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./src/shared/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ],
-      [
-        "@sfourdrinier/react-native-ble-plx",
-        {
-          "neverForLocation": true,
-          "isBackgroundEnabled": false
-        }
-      ]
-    ],
+  "expo-router",
+  "react-native-ble-plx",
+  [
+    "expo-splash-screen",
+    {
+      "image": "./src/shared/images/splash-icon.png",
+      "imageWidth": 200,
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "backgroundColor": "#000000"
+      }
+    }
+  ]
+],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

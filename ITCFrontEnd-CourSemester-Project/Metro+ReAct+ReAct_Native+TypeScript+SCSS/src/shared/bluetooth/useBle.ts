@@ -13,14 +13,12 @@ export const useBle = () => {
   });
 
   useEffect(() => {
-    const unsub = bleService.subscribe(patch =>
-      setState(prev => ({ ...prev, ...patch })),
+    const unsub = bleService.subscribe((patch) =>
+      setState((prev) => ({ ...prev, ...patch })),
     );
-
-    const sub = AppState.addEventListener('change', a => {
-      if (a === 'active') bleService.onAppResume?.();
+    const sub = AppState.addEventListener('change', (a) => {
+      if (a === 'active') bleService.onAppResume();
     });
-
     return () => { unsub(); sub.remove(); };
   }, []);
 
