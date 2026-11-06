@@ -1,8 +1,8 @@
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useState, useEffect } from 'react';
-import Inactiveplayer from '@/shared/images/in_active-player.svg';
-import Activeplayer from '@/shared/images/active-player.svg';
-import MusicSlider from './MusicSlider';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { useState, useEffect } from 'react'
+import Inactiveplayer from '@/shared/images/in_active-player.svg'
+import Activeplayer from '@/shared/images/active-player.svg'
+import MusicSlider from './MusicSlider'
 
 interface PlayerButtonProps {
   onCommand?: (cmd: string) => void;

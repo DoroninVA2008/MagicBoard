@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { COLORS } from '@/shared/constant';
-import { BackgroundSun } from '@/entities/background/Sun';
-import { BackgroundMoon } from '@/entities/background/Moon';
-import BatteryIcon from '@/shared/images/battery.svg';
-import BluetoothIcon from '@/shared/images/bluetooth-icon.svg';
-import { PlayerButton } from '@/entities/player-button';
-import { Footer } from '@/widgets/footer';
-import { useBle } from '@/shared/bluetooth/useBle';
-import { ConnectionModal } from '@/shared/bluetooth/connection';
+import React, { useState } from 'react'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native'
+import { COLORS } from '@/shared/constant'
+import { BackgroundSun } from '@/entities/background/Sun'
+import { BackgroundMoon } from '@/entities/background/Moon'
+import BatteryIcon from '@/shared/images/battery.svg'
+import BluetoothIcon from '@/shared/images/bluetooth-icon.svg'
+import { PlayerButton } from '@/entities/player-button'
+import { Footer } from '@/widgets/footer'
+import { useBle } from '@/app/store'
+import { ConnectionModal } from '@/widgets/connection/connection'
 
 interface TaleListProps {
   route: {
@@ -68,7 +68,7 @@ export const Management = ({ route }: TaleListProps) => {
 
         <Image
           source={require('@/shared/images/crasnaya_shapochka-tale.jpg')}
-          style={style.imageBoard}
+          style={styles.imageBoard}
         />
 
         <View style={{ backgroundColor: COLORS.MANAGEMENR_BACKGROUND_BIG, borderRadius: 20, height: '40%', marginTop: 20 }}>
@@ -100,6 +100,6 @@ export const Management = ({ route }: TaleListProps) => {
   );
 };
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   imageBoard: { width: '80%', height: '42%', borderRadius: 20, marginHorizontal: 'auto' },
 });
