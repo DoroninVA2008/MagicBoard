@@ -24,4 +24,4 @@ const server = http.createServer((req, res) => {
 });
 
 const PORT = 3000;
-server.listen(PORT, () => console.log(`mock-server: http://localhost:${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`mock-server: http://localhost:${PORT}`));

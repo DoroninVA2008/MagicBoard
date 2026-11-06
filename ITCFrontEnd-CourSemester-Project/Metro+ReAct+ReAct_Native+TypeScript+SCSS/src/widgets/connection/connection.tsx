@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
-  View, Text, TouchableOpacity, FlatList, Modal, StyleSheet, Alert,
-} from 'react-native';
-import { COLORS } from '@/shared/constant';
-import { requestBlePermissions } from './permissions';
-import { bleService } from './ble';
-import { getManager } from './ble';
+  View, Text, TouchableOpacity, FlatList, Modal, Alert,
+} from 'react-native'
+import { requestBlePermissions } from '@/shared/bluetooth/permissions'
+import { getManager, bleService } from '@/shared/bluetooth/ble'
+import { styles } from '@/shared/bluetooth/styles'
 
 interface Props {
   visible: boolean;
@@ -67,39 +66,27 @@ export const ConnectionModal = ({ visible, onClose }: Props) => {
 
   return (
     <Modal visible={visible} onRequestClose={onClose} animationType="slide">
-      <View style={s.container}>
-        <Text style={s.title}>
+      <View style={styles.container}>
+        <Text style={styles.title}>
           {scanning ? 'Поиск доски…' : devices.length ? 'Найденные доски:' : 'Доски не найдены'}
         </Text>
         <FlatList
           data={devices}
           keyExtractor={(d) => d.id}
           renderItem={({ item }) => (
-            <TouchableOpacity style={s.item} onPress={() => connect(item.id)}>
-              <Text style={s.itemText}>{item.name ?? 'Без имени'}</Text>
-              <Text style={s.itemSub}>{item.id}</Text>
+            <TouchableOpacity style={styles.item} onPress={() => connect(item.id)}>
+              <Text style={styles.itemText}>{item.name ?? 'Без имени'}</Text>
+              <Text style={styles.itemSub}>{item.id}</Text>
             </TouchableOpacity>
           )}
         />
-        <TouchableOpacity style={s.button} onPress={scan}>
-          <Text style={s.buttonText}>{scanning ? 'Сканирование…' : 'Искать снова'}</Text>
+        <TouchableOpacity style={styles.button} onPress={scan}>
+          <Text style={styles.buttonText}>{scanning ? 'Сканирование…' : 'Искать снова'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={s.close} onPress={onClose}>
-          <Text style={s.closeText}>Закрыть</Text>
+        <TouchableOpacity style={styles.close} onPress={onClose}>
+          <Text style={styles.closeText}>Закрыть</Text>
         </TouchableOpacity>
       </View>
     </Modal>
   );
 };
-
-const s = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: COLORS.HOME_BACKGROUND_SUN },
-  title: { fontSize: 18, fontWeight: '700', marginBottom: 16, color: COLORS.TEXT },
-  item: { padding: 14, backgroundColor: '#fff', borderRadius: 12, marginBottom: 10 },
-  itemText: { fontSize: 14, fontWeight: '600', color: COLORS.BLACK_TEXT },
-  itemSub: { fontSize: 11, color: '#666' },
-  button: { padding: 14, backgroundColor: COLORS.BACKGROUND_ACCENT, borderRadius: 12, alignItems: 'center', marginTop: 8 },
-  buttonText: { fontWeight: '700', color: COLORS.BUTTON_TEXT },
-  close: { padding: 14, alignItems: 'center' },
-  closeText: { color: COLORS.TEXT },
-});
