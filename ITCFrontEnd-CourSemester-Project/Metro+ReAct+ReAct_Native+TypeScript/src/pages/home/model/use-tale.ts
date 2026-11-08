@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import type { RootState, AppDispatch } from '@/app/slice'
-import { setTales } from '@/app/slice'
+import { setTales, type RootState, type AppDispatch } from '@/shared/store'
 import { TALES_RESPONSE } from '@/shared/datas/db'
 
 export const useTale = () => {

@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native'
 
 export async function requestBlePermissions(): Promise<boolean> {
   if (Platform.OS !== 'android') return true;
