@@ -1,5 +1,5 @@
-import Cloud from "@/shared/images/cloud.svg"
-import Sun from "@/shared/images/sun.svg"
+import Cloud from '@/shared/images/cloud.svg'
+import Sun from '@/shared/images/sun.svg'
 
 export const BackgroundSun = () => {
     return (

@@ -1,1 +1,1 @@
-export { ScreenOfTale } from "./screen-of-tale"
+export { ScreenOfTale } from './screen-of-tale'

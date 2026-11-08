@@ -1,23 +1,31 @@
 import { useNavigation } from "@react-navigation/native";
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 // Entities
 import { Tale } from "@/entities/tale/ui";
 // Widgets
 import { Footer } from "@/widgets/footer";
+// UI
+import { SearPut } from '@/entities/searput/searput';
 // Get data from API
 import { COLORS } from "@/shared/constant";
 import { useTale } from "../model";
 // Backgrounds
 import { BackgroundSun } from "@/entities/background/Sun";
 import { BackgroundMoon } from "@/entities/background/Moon";
-import { SearPut } from '@/entities/searput'
+// Filter
+import { filterTales } from '@/shared/filput'
 
 export default () => {
   const { dataSheet, dataTale } = useTale()
   const navigation = useNavigation<any>()
   const dateLogin = new Date().getHours()
-  const { width, height } = useWindowDimensions()
+
+  // ← состояние поиска
+  const [query, setQuery] = useState('')
+
+  // ← фильтрация через filterTales
+  const filtered = filterTales(dataTale, query)
 
   return (
     <View style={{
@@ -28,11 +36,13 @@ export default () => {
           : COLORS.HOME_BACKGROUND_MOON
     }}>
       {(dateLogin < 19 && dateLogin > 7) ? <BackgroundSun /> : <BackgroundMoon />}
-      <TouchableOpacity style={{ marginHorizontal: 'auto', paddingTop: 40 }}>
-        <SearPut />
-      </TouchableOpacity>
+
+      <View style={{ marginTop: 40, marginBottom: 10 }}>
+        <SearPut value={query} onChangeText={setQuery} />
+      </View>
+
       <ScrollView>
-        <View style={{ marginTop: 30, marginHorizontal: "6%" }}>
+        <View style={{ marginTop: 20, marginHorizontal: "6%" }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={style.text}>{`${dataSheet}`}</Text>
             <Text style={style.text}>Все</Text>
@@ -43,7 +53,7 @@ export default () => {
             contentContainerStyle={{ columnGap: 20 }}
             style={{ marginVertical: 10 }}
           >
-            {dataTale.map((item: any, index: number) => (
+            {filtered.map((item: any, index: number) => (
               <TouchableOpacity
                 key={item.id ? String(item.id) : `${item.name}-${index}`}
                 onPress={() => {

@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import { View, Platform } from 'react-native'
 import Home from '@/pages/home/ui/home'
-import { Management } from '@/pages/manegement'
+import { Management } from '@/pages/management'
 import { ScreenOfTale } from '@/pages/screen-of-tale/ui'
 
 type RootStackParamList = {

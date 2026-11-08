@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Text, View } from "react-native"
-import { COLORS } from "@/shared/constant"
+import { Image, StyleSheet, Text, View } from 'react-native'
+import { COLORS } from '@/shared/constant'
 
 interface taleList {
     inDev: string;

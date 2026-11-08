@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { COLORS } from '@/shared/constant'
 import { BackgroundSun } from '@/entities/background/Sun'
 import { BackgroundMoon } from '@/entities/background/Moon'
 import BatteryIcon from '@/shared/images/battery.svg'
-import BluetoothIcon from '@/shared/images/bluetooth-icon.svg'
+import BluetoothIcon from '@/shared/images/bluetooth.svg'
+import BlueToothIcon from '@/shared/images/bluetooth-icon.svg'
 import { PlayerButton } from '@/entities/player-button'
 import { Footer } from '@/widgets/footer'
-import { useBle } from '@/app/store'
-import { ConnectionModal } from '@/widgets/connection/connection'
+import { useBle } from '@/shared/store'
+import { ConnectionModal } from '@/widgets/connection'
 
 interface TaleListProps {
   route: {
@@ -40,16 +41,27 @@ export const Management = ({ route }: TaleListProps) => {
     status === 'error' ? 'Ошибка' :
     'Не подключено';
 
+    const isConnected = status === 'connected' || status === 'connecting';
+
   return (
     <View style={{ flex: 1, backgroundColor: dateLogin < 19 && dateLogin > 7 ? COLORS.HOME_BACKGROUND_SUN : COLORS.HOME_BACKGROUND_MOON }}>
       {dateLogin < 19 && dateLogin > 7 ? <BackgroundSun /> : <BackgroundMoon />}
 
       <View style={{ flex: 1, marginTop: 50, marginHorizontal: '6%', rowGap: 10 }}>
         <View style={{ flexDirection: 'row', columnGap: 20 }}>
+          
+          {/* Статус Bluetooth */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
-            <BluetoothIcon width={20} height={20} />
+            {/* Условный рендеринг иконки */}
+            {isConnected ? (
+              <BlueToothIcon width={20} height={20} />
+            ) : (
+              <BluetoothIcon width={20} height={20} />
+            )}
             <Text style={{ color: COLORS.TEXT, fontSize: 12 }}>{statusLabel}</Text>
           </View>
+
+          {/* Уровень заряда */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
             <BatteryIcon width={20} height={20} />
             <Text style={{ color: COLORS.TEXT, fontSize: 12 }}>
@@ -88,8 +100,6 @@ export const Management = ({ route }: TaleListProps) => {
                 onCommand={sendCommand}
                 onSeek={seek}
                 isPlaying={isPlaying}
-                duration={duration}
-                progress={progress}
               />
             </View>
           </View>
