@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    maxWidth: 480,
+    maxWidth: 'clamp(128px, 50vw, 640px)',
     height: 42,
     paddingHorizontal: 16,
     borderRadius: 21,

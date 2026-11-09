@@ -34,6 +34,9 @@ export const Management = ({ route }: TaleListProps) => {
   const { status, battery, progress, duration, isPlaying, sendCommand, seek } = useBle();
   const [showConnect, setShowConnect] = useState(false);
 
+  // Проверяем, выбрана ли сказка. Если нет — плеер не показываем.
+  const isTaleSelected = name !== 'Unknown Tale' && author !== 'Unknown Author';
+
   const statusLabel =
     status === 'connected' ? 'Подключено' :
     status === 'connecting' ? 'Соединение…' :
@@ -41,7 +44,7 @@ export const Management = ({ route }: TaleListProps) => {
     status === 'error' ? 'Ошибка' :
     'Не подключено';
 
-    const isConnected = status === 'connected' || status === 'connecting';
+  const isConnected = status === 'connected' || status === 'connecting';
 
   return (
     <View style={{ flex: 1, backgroundColor: dateLogin < 19 && dateLogin > 7 ? COLORS.HOME_BACKGROUND_SUN : COLORS.HOME_BACKGROUND_MOON }}>
@@ -52,7 +55,6 @@ export const Management = ({ route }: TaleListProps) => {
           
           {/* Статус Bluetooth */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
-            {/* Условный рендеринг иконки */}
             {isConnected ? (
               <BlueToothIcon width={20} height={20} />
             ) : (
@@ -78,7 +80,7 @@ export const Management = ({ route }: TaleListProps) => {
           </TouchableOpacity>
         )}
 
-        <Text style={{ fontSize: 16, fontWeight: '700', color: COLORS.TEXT }}>Magic Board 1v</Text>
+        <Text style={{ fontSize: 16, fontWeight: '700', color: COLORS.TEXT }}>MagicBoard v2</Text>
 
         <Image
           source={require('@/shared/images/crasnaya_shapochka-tale.jpg')}
@@ -90,18 +92,22 @@ export const Management = ({ route }: TaleListProps) => {
             <View style={{ flexDirection: 'row', marginHorizontal: '8%', marginTop: 18, columnGap: 14 }}>
               <Image source={{ uri: imageUrl }} style={{ width: 136, height: 136, borderRadius: 10 }} />
               <View>
-                <Text style={{ fontSize: 11, fontWeight: '400', color: COLORS.MANAGEMENT_AUTOR }}>Magic Board 1v</Text>
+                <Text style={{ fontSize: 11, fontWeight: '400', color: COLORS.MANAGEMENT_AUTOR }}>MagicBoard v2</Text>
                 <Text style={{ fontSize: 13, fontWeight: '800', color: COLORS.BLACK_TEXT }}>{name}</Text>
                 <Text style={{ fontSize: 11, fontWeight: '600', color: COLORS.MANAGEMENT_AUTOR }}>{author}</Text>
               </View>
             </View>
-            <View style={{ marginHorizontal: 'auto', marginTop: 15 }}>
-              <PlayerButton
-                onCommand={sendCommand}
-                onSeek={seek}
-                isPlaying={isPlaying}
-              />
-            </View>
+            
+            {/* УСЛОВНЫЙ РЕНДЕРИНГ ПЛЕЕРА: рендерим только если выбрана сказка */}
+            {isTaleSelected && (
+              <View style={{ marginHorizontal: 'auto', marginTop: 15 }}>
+                <PlayerButton
+                  onCommand={sendCommand}
+                  onSeek={seek}
+                  isPlaying={isPlaying}
+                />
+              </View>
+            )}
           </View>
         </View>
       </View>
