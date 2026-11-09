@@ -1,4 +1,3 @@
-// src/entities/music-slider/MusicSlider.tsx
 import React, { useRef, useEffect, useState } from 'react'
 import { View, StyleSheet, Animated, PanResponder, GestureResponderEvent } from 'react-native'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
@@ -24,7 +23,13 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
 
   const animatedValue = useRef(new Animated.Value(0)).current
   const isDragging = useRef(false)
+  
+  // Здесь храним время, куда перемотали
+  const seekTargetRef = useRef<number | null>(null)
   const [isSeeking, setIsSeeking] = useState(false)
+  
+  // Этот таймер не даст ползунку дернуться, если браузер завис
+  const seekTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const durationMs = status.duration > 0 ? status.duration * 1000 : 10000
 
@@ -47,23 +52,26 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     if (isDragging.current) return
 
     if (status.duration > 0) {
-      const realRatio = status.currentTime / status.duration
-
-      // Если мы только что отпустили ползунок
-      if (isSeeking) {
-        // Ждем, пока аудио реально догонит то место, куда мы его бросили (разница < 1 сек)
-        // Чтобы избежать ложных срабатываний, проверяем, что реальное время не 0
-        if (status.currentTime > 0 && Math.abs(realRatio - (animatedValue as any).__getValue()) < 0.05) {
+      // Если мы перематываем — ждем, пока аудио догонит
+      if (seekTargetRef.current !== null) {
+        // На вебе браузер может сбросить currentTime в 0 на время буферизации.
+        // Ждем, пока разница станет минимальной (или пройдет 1.5 секунды)
+        const diff = Math.abs(status.currentTime - seekTargetRef.current)
+        
+        if (diff < 0.5) {
+          seekTargetRef.current = null
           setIsSeeking(false)
+          if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+        } else {
+          return // Пока не догнал — ничего не трогаем
         }
-        return // Блокируем визуальное обновление
       }
 
-      // Обычная синхронизация
+      const realRatio = status.currentTime / status.duration
       animatedValue.setValue(realRatio)
       onProgressChange?.(status.currentTime * 1000)
     }
-  }, [status.currentTime, status.duration, isSeeking, onProgressChange, animatedValue])
+  }, [status.currentTime, status.duration, onProgressChange, animatedValue])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -71,6 +79,8 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         isDragging.current = true
+        seekTargetRef.current = null
+        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
       },
       onPanResponderMove: (evt: GestureResponderEvent) => {
         const x = evt.nativeEvent.locationX
@@ -78,38 +88,41 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
         animatedValue.setValue(ratio)
       },
       onPanResponderRelease: (evt) => {
-        const x = evt.nativeEvent.locationX
-        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH))
-        if (ratio > 0.99) ratio = 0.99
-
-        isDragging.current = false
-
-        if (status.duration && status.duration > 0) {
-          const newTime = ratio * status.duration
-          if (Number.isFinite(newTime)) {
-            setIsSeeking(true) // Блокируем авто-синхронизацию
-            player.seekTo(newTime)
-            onProgressChange?.(newTime * 1000)
-          }
-        }
+        handleSeek(evt.nativeEvent.locationX)
       },
-            onPanResponderTerminate: (evt) => {
-        // Тот же код, что и в onPanResponderRelease
-        const x = evt.nativeEvent.locationX
-        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH))
-        if (ratio > 0.99) ratio = 0.99
-        isDragging.current = false
-        if (status.duration && status.duration > 0) {
-          const newTime = ratio * status.duration
-          if (Number.isFinite(newTime)) {
-            setIsSeeking(true)
-            player.seekTo(newTime)
-            onProgressChange?.(newTime * 1000)
-          }
-        }
+      onPanResponderTerminate: (evt) => {
+        handleSeek(evt.nativeEvent.locationX)
       },
     }),
   ).current
+
+  const handleSeek = (locationX: number) => {
+    let ratio = Math.max(0, Math.min(1, locationX / SLIDER_WIDTH))
+    if (ratio > 0.99) ratio = 0.99
+
+    isDragging.current = false
+
+    if (status.duration && status.duration > 0) {
+      const newTime = ratio * status.duration
+      if (Number.isFinite(newTime)) {
+        animatedValue.setValue(ratio)
+        seekTargetRef.current = newTime
+        setIsSeeking(true)
+        
+        player.seekTo(newTime)
+        onProgressChange?.(newTime * 1000)
+
+        // Страховка: если браузер не обновит currentTime корректно, 
+        // принудительно снимем блокировку через 1.5 секунды, 
+        // чтобы ползунок не застыл навсегда.
+        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+        seekTimeoutRef.current = setTimeout(() => {
+          seekTargetRef.current = null
+          setIsSeeking(false)
+        }, 1500)
+      }
+    }
+  }
 
   const thumbPosition = animatedValue.interpolate({
     inputRange: [0, 1],
