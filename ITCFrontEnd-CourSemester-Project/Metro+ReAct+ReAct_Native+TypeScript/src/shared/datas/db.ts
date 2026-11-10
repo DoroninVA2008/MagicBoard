@@ -1,5 +1,6 @@
 export interface Tale {
   id: number;
+  inDev: string;
   imageUrl: string;
   name: string;
   author: string;
@@ -15,7 +16,6 @@ export interface TalesResponse {
   tales: Tale[];
 }
 
-// Сырые данные — как в db.json
 const RAW_TALES = [
   {
     forName: 'Для всей семьи',
@@ -44,7 +44,6 @@ const RAW_TALES = [
   },
 ];
 
-// Удобный экспорт — уже разбитый на header + tales
 export const TALES_RESPONSE: TalesResponse = {
   header: RAW_TALES.find((item) => 'forName' in item) as TaleHeader,
   tales: RAW_TALES.filter(

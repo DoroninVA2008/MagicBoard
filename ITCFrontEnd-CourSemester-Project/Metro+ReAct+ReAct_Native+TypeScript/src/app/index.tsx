@@ -1,13 +1,13 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import { View, Platform } from 'react-native'
-import Home from '@/pages/home/ui/home'
-import { Management } from '@/pages/management'
+import { Home } from '@/pages/home/ui'
+import { Management } from '@/pages/management/ui'
 import { ScreenOfTale } from '@/pages/screen-of-tale/ui'
 
 type RootStackParamList = {
   HomeScreen: undefined,
-  ManagementScreen: { inDev: string; imageUrl: string; name: string; author: string },
-  TaleScreen: { inDev: string; imageUrl: string; name: string; author: string },
+  ManagementScreen: { id: number; inDev: string; imageUrl: string; name: string; author: string },
+  TaleScreen: { id: number; inDev: string; imageUrl: string; name: string; author: string },
 };
 
 if (Platform.OS === 'web' && typeof window !== 'undefined') {

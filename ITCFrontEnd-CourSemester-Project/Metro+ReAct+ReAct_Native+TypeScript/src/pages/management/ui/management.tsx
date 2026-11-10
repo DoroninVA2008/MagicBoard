@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { COLORS } from '@/shared/constant'
 import { BackgroundSun } from '@/entities/background/Sun'
 import { BackgroundMoon } from '@/entities/background/Moon'
@@ -10,10 +10,12 @@ import { PlayerButton } from '@/entities/player-button'
 import { Footer } from '@/widgets/footer'
 import { useBle } from '@/shared/store'
 import { ConnectionModal } from '@/widgets/connection'
+import { styles } from './styles'
 
 interface TaleListProps {
   route: {
     params?: {
+      id: number;
       inDev: string;
       imageUrl: string;
       name: string;
@@ -24,6 +26,7 @@ interface TaleListProps {
 
 export const Management = ({ route }: TaleListProps) => {
   const {
+    id = 0,
     inDev = 'В разработке',
     imageUrl = 'https://www.radionetplus.ru/uploads/posts/2013-12/1387478876_krasivye-fotki-1.jpeg',
     name = 'Unknown Tale',
@@ -102,6 +105,7 @@ export const Management = ({ route }: TaleListProps) => {
             {isTaleSelected && (
               <View style={{ marginHorizontal: 'auto', marginTop: 15 }}>
                 <PlayerButton
+                  taleId={id}
                   onCommand={sendCommand}
                   onSeek={seek}
                   isPlaying={isPlaying}
@@ -117,7 +121,3 @@ export const Management = ({ route }: TaleListProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  imageBoard: { width: '80%', height: '42%', borderRadius: 20, marginHorizontal: 'auto' },
-});

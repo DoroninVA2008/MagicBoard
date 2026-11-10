@@ -6,11 +6,10 @@ export {
   setStatus,
   setBattery,
   resetBoard,
-  setTales,        // ← обязательно
+  setTales,
   setLoading,
   setError,
 } from './store'
-
 export type {
   RootState,
   AppDispatch,
