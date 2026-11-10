@@ -1,14 +1,12 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
-// Shared
-import { COLORS } from "@/shared/constant"
-// Backgrounds
-import { BackgroundSun } from "@/entities/background/Sun";
-import { BackgroundMoon } from "@/entities/background/Moon";
-//Icons
-import { FavoritesIcon } from "@/entities/favorites";
-import GoBackBlack from "@/shared/images/goBack-black.svg"
-import GoBackWhite from "@/shared/images/goBack-white.svg"
+import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native' // Shared
+import { COLORS } from '@/shared/constant' // Backgrounds
+import { BackgroundSun } from '@/entities/background/Sun'
+import { BackgroundMoon } from '@/entities/background/Moon' //Icons
+import { FavoritesIcon } from '@/entities/favorites'
+import GoBackBlack from '@/shared/images/goBack-black.svg'
+import GoBackWhite from '@/shared/images/goBack-white.svg'
+import { style } from './styles'
 
 interface taleListProps {
   route: {
@@ -22,7 +20,7 @@ interface taleListProps {
 }
 
 export const ScreenOfTale = ({ route }: taleListProps) => {
-    const { inDev, imageUrl, name, author } = route.params
+    const { id, inDev, imageUrl, name, author } = route.params
     const navigation: any = useNavigation()
     const dateLogin = new Date().getHours()
 
@@ -82,6 +80,7 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
                 </View>
                 <TouchableOpacity style={style.button} onPress={
                     () => navigation.navigate("ManagementScreen", { 
+                        id: id,
                         imageUrl: imageUrl,
                         name: name,
                         author: author })
@@ -93,56 +92,3 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
         
     )
 }
-
-const style = StyleSheet.create({
-    image: {
-        width: 277,
-        height: 335,
-        borderRadius: 5,
-    },
-    button: {
-        width: "70%",
-        alignSelf: "center",
-        backgroundColor: COLORS.BACKGROUND_ACCENT,
-        alignItems: "center",
-        paddingBottom: 20,
-        paddingTop: 14,
-        borderRadius: 8,
-        marginBottom: 50,
-    },
-    box: {
-        flex: 1,
-        backgroundColor: COLORS.TALE_SCREEN_BACKGROUND,
-        borderColor: COLORS.BORDER_COLOR,
-        borderWidth: 5,
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-        marginTop: 45,
-    },
-    long: {
-        backgroundColor: COLORS.BACKGROUND_ACCENT,
-        fontSize: 16,
-        fontWeight: 700,
-        width: 125,
-        height: 35,
-        color: COLORS.BLACK_TEXT,
-        borderRadius: 30,
-        textAlign: "center",
-        alignSelf: "center",
-        lineHeight: 35,
-        top: -17,
-    },
-    about: {
-        fontSize: 18,
-        fontWeight: 700,
-        marginBottom: 3,
-        color: COLORS.BLACK_TEXT,
-    },
-    topPanel: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 80,
-        marginTop: 50,
-    }
-})

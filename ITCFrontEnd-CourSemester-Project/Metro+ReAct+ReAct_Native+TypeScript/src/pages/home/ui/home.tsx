@@ -1,20 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-// Entities
-import { Tale } from "@/entities/tale/ui";
-// Widgets
-import { Footer } from "@/widgets/footer";
-// UI
-import { SearPut } from '@/entities/searput/searput';
-// Get data from API
-import { COLORS } from "@/shared/constant";
-import { useTale } from "../model";
-// Backgrounds
-import { BackgroundSun } from "@/entities/background/Sun";
-import { BackgroundMoon } from "@/entities/background/Moon";
-// Filter
+import { useNavigation } from '@react-navigation/native'
+import React, { useState } from 'react'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native' // Entities
+import { Tale } from '@/entities/tale/ui' // Widgets
+import { Footer } from '@/widgets/footer' // UI
+import { SearPut } from '@/entities/searput/searput' // Get data from API
+import { COLORS } from '@/shared/constant'
+import { useTale } from '../model' // Backgrounds
+import { BackgroundSun } from '@/entities/background/Sun'
+import { BackgroundMoon } from '@/entities/background/Moon' // Filter
 import { filterTales } from '@/shared/filput'
+import { style } from './styles'
 
 export default () => {
   const { dataSheet, dataTale } = useTale()
@@ -58,6 +53,7 @@ export default () => {
                 key={item.id ? String(item.id) : `${item.name}-${index}`}
                 onPress={() => {
                   navigation.navigate("TaleScreen", {
+                    id: item.id,
                     inDev: item.inDev,
                     imageUrl: item.imageUrl,
                     name: item.name,
@@ -75,11 +71,3 @@ export default () => {
     </View>
   )
 }
-
-const style = StyleSheet.create({
-  text: {
-    fontSize: 16,
-    fontWeight: 600,
-    color: COLORS.TEXT
-  }
-})

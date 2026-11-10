@@ -1,137 +1,186 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { View, StyleSheet, Animated, PanResponder, GestureResponderEvent } from 'react-native'
+import { View, Animated, PanResponder, GestureResponderEvent, PanResponderGestureState } from 'react-native'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
+import { styles, SLIDER_WIDTH } from './styles'
 
-const audioSource = require('@/shared/audios/AllMagicTale.m4a')
+const audioSource = require('@/shared/audios/AllMagicTale.m4a');
 
 interface MusicSliderProps {
+  taleId?: number;
   isActive: boolean;
+  duration: number;
+  initialProgress?: number;
   onProgressChange?: (ms: number) => void;
   onDurationChange?: (ms: number) => void;
 }
 
-const SLIDER_WIDTH = 300;
 const THUMB_SIZE = 20;
 
 export const MusicSlider: React.FC<MusicSliderProps> = ({
+  taleId = 0,
   isActive,
+  duration = 10000,
+  initialProgress = 0,
   onProgressChange,
   onDurationChange,
 }) => {
-  const player = useAudioPlayer(audioSource)
-  const status = useAudioPlayerStatus(player)
+  const animatedValue = useRef(new Animated.Value(initialProgress)).current;
+  const isDragging = useRef(false);
 
-  const animatedValue = useRef(new Animated.Value(0)).current
-  const isDragging = useRef(false)
-  
-  // Здесь храним время, куда перемотали
-  const seekTargetRef = useRef<number | null>(null)
-  const [isSeeking, setIsSeeking] = useState(false)
-  
-  // Этот таймер не даст ползунку дернуться, если браузер завис
-  const seekTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const progressRef = useRef(initialProgress);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [sliderPageX, setSliderPageX] = useState(0);
 
-  const durationMs = status.duration > 0 ? status.duration * 1000 : 10000
+  const isActiveRef = useRef(isActive);
+  useEffect(() => { isActiveRef.current = isActive }, [isActive]);
 
-  useEffect(() => {
-    if (status.duration > 0) {
-      onDurationChange?.(status.duration * 1000)
-    }
-  }, [status.duration, onDurationChange])
+  // === ЛОГИКА АУДИО ===
+  const player = useAudioPlayer(audioSource);
+  const status = useAudioPlayerStatus(player);
+
+  const hasAudio = taleId === 1;
+  const actualDuration = hasAudio && status.duration > 0
+    ? status.duration * 1000 
+    : duration;
 
   useEffect(() => {
+    onDurationChange?.(actualDuration);
+  }, [actualDuration, onDurationChange]);
+
+  // Управление воспроизведением аудио
+  useEffect(() => {
+    if (!hasAudio) return;
     if (isActive) {
-      player.play()
+      player.play();
     } else {
-      player.pause()
+      player.pause();
     }
-  }, [isActive, player])
+  }, [isActive, hasAudio, player]);
 
-  // Синхронизация
   useEffect(() => {
-    if (isDragging.current) return
+    if (!hasAudio) return; // Для треков без аудио работает таймер
 
-    if (status.duration > 0) {
-      // Если мы перематываем — ждем, пока аудио догонит
-      if (seekTargetRef.current !== null) {
-        // На вебе браузер может сбросить currentTime в 0 на время буферизации.
-        // Ждем, пока разница станет минимальной (или пройдет 1.5 секунды)
-        const diff = Math.abs(status.currentTime - seekTargetRef.current)
-        
-        if (diff < 0.5) {
-          seekTargetRef.current = null
-          setIsSeeking(false)
-          if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
-        } else {
-          return // Пока не догнал — ничего не трогаем
-        }
+    const updateProgress = () => {
+      if (status.duration > 0) {
+        const ratio = status.currentTime / status.duration;
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
+        onProgressChange?.(status.currentTime * 1000);
       }
+    };
 
-      const realRatio = status.currentTime / status.duration
-      animatedValue.setValue(realRatio)
-      onProgressChange?.(status.currentTime * 1000)
+    const interval = setInterval(updateProgress, 100);
+    return () => clearInterval(interval);
+  }, [status.currentTime, status.duration, hasAudio, onProgressChange, animatedValue]);
+
+  const startTimer = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (!isActiveRef.current || hasAudio) return; // Если есть аудио, таймер не нужен
+
+    const startTime = Date.now() - progressRef.current * actualDuration;
+
+    intervalRef.current = setInterval(() => {
+      if (isDragging.current || !isActiveRef.current) return;
+
+      const elapsed = Date.now() - startTime;
+      const nextRatio = Math.min(1, elapsed / actualDuration);
+
+      animatedValue.setValue(nextRatio);
+      progressRef.current = nextRatio;
+      onProgressChange?.(nextRatio * actualDuration);
+
+      if (nextRatio >= 1 && intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (isActive && !hasAudio) {
+      startTimer();
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
-  }, [status.currentTime, status.duration, onProgressChange, animatedValue])
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isActive, actualDuration, hasAudio]);
+
+  const seekAudio = (ms: number) => {
+    if (hasAudio && status.duration > 0) {
+      player.seekTo(ms / 1000);
+    }
+  };
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
-        isDragging.current = true
-        seekTargetRef.current = null
-        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
+        isDragging.current = true;
+        if (intervalRef.current) clearInterval(intervalRef.current);
       },
-      onPanResponderMove: (evt: GestureResponderEvent) => {
-        const x = evt.nativeEvent.locationX
-        const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH))
-        animatedValue.setValue(ratio)
+      onPanResponderMove: (_evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+        const x = gestureState.moveX - sliderPageX;
+        const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
+        seekAudio(ratio * actualDuration);
       },
-      onPanResponderRelease: (evt) => {
-        handleSeek(evt.nativeEvent.locationX)
+      onPanResponderRelease: (_evt, gestureState) => {
+        const x = gestureState.moveX - sliderPageX;
+        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+        if (ratio > 0.99) ratio = 0.99;
+
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
+
+        const newMs = ratio * actualDuration;
+        onProgressChange?.(newMs);
+        seekAudio(newMs);
+
+        isDragging.current = false;
+
+        if (isActiveRef.current) {
+          startTimer();
+        }
       },
-      onPanResponderTerminate: (evt) => {
-        handleSeek(evt.nativeEvent.locationX)
-      },
-    }),
-  ).current
+      onPanResponderTerminate: (_evt, gestureState) => {
+        const x = gestureState.moveX - sliderPageX;
+        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
 
-  const handleSeek = (locationX: number) => {
-    let ratio = Math.max(0, Math.min(1, locationX / SLIDER_WIDTH))
-    if (ratio > 0.99) ratio = 0.99
+        const newMs = ratio * actualDuration;
+        onProgressChange?.(newMs);
+        seekAudio(newMs);
 
-    isDragging.current = false
+        isDragging.current = false;
 
-    if (status.duration && status.duration > 0) {
-      const newTime = ratio * status.duration
-      if (Number.isFinite(newTime)) {
-        animatedValue.setValue(ratio)
-        seekTargetRef.current = newTime
-        setIsSeeking(true)
-        
-        player.seekTo(newTime)
-        onProgressChange?.(newTime * 1000)
-
-        // Страховка: если браузер не обновит currentTime корректно, 
-        // принудительно снимем блокировку через 1.5 секунды, 
-        // чтобы ползунок не застыл навсегда.
-        if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current)
-        seekTimeoutRef.current = setTimeout(() => {
-          seekTargetRef.current = null
-          setIsSeeking(false)
-        }, 1500)
+        if (isActiveRef.current) {
+          startTimer();
+        }
       }
-    }
-  }
+    }),
+  ).current;
 
   const thumbPosition = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, SLIDER_WIDTH - THUMB_SIZE],
-  })
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.sliderTrack} {...panResponder.panHandlers}>
+      <View 
+        style={styles.sliderTrack} 
+        {...panResponder.panHandlers}
+        onLayout={(event) => {
+          setSliderPageX(event.nativeEvent.layout.x);
+        }}
+      >
+        <View style={styles.trackBg} />
+
         <Animated.View
           style={[
             styles.progressBar,
@@ -141,12 +190,5 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
         <Animated.View style={[styles.thumb, { transform: [{ translateX: thumbPosition }] }]} />
       </View>
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  container: { justifyContent: 'center', alignItems: 'center', paddingVertical: 20 },
-  sliderTrack: { width: SLIDER_WIDTH, height: 9, backgroundColor: '#7A7A7A', borderRadius: 20, justifyContent: 'center', paddingHorizontal: 10, position: 'relative' },
-  progressBar: { height: 9, backgroundColor: '#F4FAFF', borderRadius: 20, position: 'absolute', left: 0, top: '50%', marginTop: -5 },
-  thumb: { width: 20, height: 20, backgroundColor: '#181818', borderRadius: 10, position: 'absolute', top: '50%', marginTop: -10 },
-})
