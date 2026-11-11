@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { styles } from './styles'
 import Inactiveplayer from '@/shared/images/in_active-player.svg'
 import Activeplayer from '@/shared/images/active-player.svg'
-import { MusicSlider } from '@/entities/music-slider'
+import { MusicSlider } from '@/views/music-slider'
 
 interface PlayerButtonProps {
   taleId?: number;

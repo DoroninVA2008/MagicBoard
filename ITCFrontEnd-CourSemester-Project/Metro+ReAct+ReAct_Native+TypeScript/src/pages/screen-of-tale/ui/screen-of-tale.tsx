@@ -1,12 +1,12 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native' // Shared
 import { COLORS } from '@/shared/constant' // Backgrounds
-import { BackgroundSun } from '@/entities/background/Sun'
-import { BackgroundMoon } from '@/entities/background/Moon' //Icons
-import { FavoritesIcon } from '@/entities/favorites'
+import { BackgroundSun } from '@/views/background/Sun'
+import { BackgroundMoon } from '@/views/background/Moon' // Icons
+import { FavoritesIcon } from '@/views/favorites'
 import GoBackBlack from '@/shared/images/goBack-black.svg'
 import GoBackWhite from '@/shared/images/goBack-white.svg'
-import { style } from './styles'
+import { styles } from './styles'
 
 interface taleListProps {
   route: {
@@ -24,10 +24,10 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
     const navigation: any = useNavigation()
     const dateLogin = new Date().getHours()
 
-    // storage.set( 'inDev', inDev )
-    // storage.set( 'imageUrl', imageUrl )
-    // storage.set( 'name', name )
-    // storage.set( 'author', author )
+    /* storage.set( 'inDev', inDev )
+    storage.set( 'imageUrl', imageUrl )
+    storage.set( 'name', name )
+    storage.set( 'author', author ) */
 
     return (
         <View style={{ flex: 1, 
@@ -36,7 +36,7 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
                     ? COLORS.HOME_BACKGROUND_SUN 
                     : COLORS.HOME_BACKGROUND_MOON }}>
         {(dateLogin < 19 && dateLogin > 7) ? <BackgroundSun/> : <BackgroundMoon/>}
-            <View style={style.topPanel}>
+            <View style={styles.topPanel}>
                 <TouchableOpacity 
                     style={{width: "50%"}}
                     onPress={() => {navigation.goBack()}}
@@ -54,17 +54,17 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
             <View style={{alignItems: 'center', marginTop: 20}}>
                 <Image
                     source={{uri: imageUrl}}
-                    style={style.image}
+                    style={styles.image}
                 />
                 <Text style={{fontSize: 16, color: COLORS.TEXT, fontWeight: 500, marginTop: 17}}>{name}</Text>
                 <Text style={{fontSize: 12, color: COLORS.AUTOR_TEXT, marginTop: 11}}>{author}</Text>
             </View>
-            <View style={style.box}>
-                <Text style={style.long}>
+            <View style={styles.box}>
+                <Text style={styles.long}>
                     30 минут
                 </Text>
                 <View style={{flex: 1, paddingHorizontal: "6%"}}>
-                    <Text style={style.about}>
+                    <Text style={styles.about}>
                         О сказке
                     </Text>
                     <Text 
@@ -78,7 +78,7 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={style.button} onPress={
+                <TouchableOpacity style={styles.button} onPress={
                     () => navigation.navigate("ManagementScreen", { 
                         id: id,
                         imageUrl: imageUrl,

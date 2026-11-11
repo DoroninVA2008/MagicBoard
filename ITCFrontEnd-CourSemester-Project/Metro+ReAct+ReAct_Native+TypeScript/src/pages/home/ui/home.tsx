@@ -1,25 +1,23 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native' // Entities
-import { Tale } from '@/entities/tale/ui' // Widgets
-import { Footer } from '@/widgets/footer' // UI
-import { SearPut } from '@/entities/searput/searput' // Get data from API
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Tale } from '@/views/tale/ui'
+import { Footer } from '@/widgets/footer'
+import { SearPut } from '@/views/searput/searput'
 import { COLORS } from '@/shared/constant'
-import { useTale } from '../model' // Backgrounds
-import { BackgroundSun } from '@/entities/background/Sun'
-import { BackgroundMoon } from '@/entities/background/Moon' // Filter
+import { useTale } from '../model'
+import { BackgroundSun } from '@/views/background/Sun'
+import { BackgroundMoon } from '@/views/background/Moon'
 import { filterTales } from '@/shared/filput'
-import { style } from './styles'
+import { styles } from './styles'
 
 export default () => {
   const { dataSheet, dataTale } = useTale()
   const navigation = useNavigation<any>()
   const dateLogin = new Date().getHours()
 
-  // ← состояние поиска
   const [query, setQuery] = useState('')
 
-  // ← фильтрация через filterTales
   const filtered = filterTales(dataTale, query)
 
   return (
@@ -39,8 +37,8 @@ export default () => {
       <ScrollView>
         <View style={{ marginTop: 20, marginHorizontal: "6%" }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={style.text}>{`${dataSheet}`}</Text>
-            <Text style={style.text}>Все</Text>
+            <Text style={styles.text}>{`${dataSheet}`}</Text>
+            <Text style={styles.text}>Все</Text>
           </View>
           <ScrollView
             horizontal={true}

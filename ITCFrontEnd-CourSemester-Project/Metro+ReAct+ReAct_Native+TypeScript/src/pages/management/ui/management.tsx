@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { COLORS } from '@/shared/constant'
-import { BackgroundSun } from '@/entities/background/Sun'
-import { BackgroundMoon } from '@/entities/background/Moon'
+import { BackgroundSun } from '@/views/background/Sun'
+import { BackgroundMoon } from '@/views/background/Moon'
 import BatteryIcon from '@/shared/images/battery.svg'
 import BluetoothIcon from '@/shared/images/bluetooth.svg'
 import BlueToothIcon from '@/shared/images/bluetooth-icon.svg'
-import { PlayerButton } from '@/entities/player-button'
+import { PlayerButton } from '@/widgets/playton'
 import { Footer } from '@/widgets/footer'
 import { useBle } from '@/shared/store'
 import { ConnectionModal } from '@/widgets/connection'
@@ -56,7 +56,6 @@ export const Management = ({ route }: TaleListProps) => {
       <View style={{ flex: 1, marginTop: 50, marginHorizontal: '6%', rowGap: 10 }}>
         <View style={{ flexDirection: 'row', columnGap: 20 }}>
           
-          {/* Статус Bluetooth */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
             {isConnected ? (
               <BlueToothIcon width={20} height={20} />
@@ -66,7 +65,6 @@ export const Management = ({ route }: TaleListProps) => {
             <Text style={{ color: COLORS.TEXT, fontSize: 12 }}>{statusLabel}</Text>
           </View>
 
-          {/* Уровень заряда */}
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
             <BatteryIcon width={20} height={20} />
             <Text style={{ color: COLORS.TEXT, fontSize: 12 }}>
@@ -101,7 +99,6 @@ export const Management = ({ route }: TaleListProps) => {
               </View>
             </View>
             
-            {/* УСЛОВНЫЙ РЕНДЕРИНГ ПЛЕЕРА: рендерим только если выбрана сказка */}
             {isTaleSelected && (
               <View style={{ marginHorizontal: 'auto', marginTop: 15 }}>
                 <PlayerButton
