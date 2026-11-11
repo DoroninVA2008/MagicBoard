@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native'
 import { COLORS } from '@/shared/constant'
 
-export const style = StyleSheet.create({
+export const styles = StyleSheet.create({
     image: {
         width: 277,
         height: 335,

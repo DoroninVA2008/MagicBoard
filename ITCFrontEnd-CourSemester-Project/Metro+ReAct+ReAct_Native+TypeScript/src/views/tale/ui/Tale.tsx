@@ -2,14 +2,14 @@ import { Image, Text, View } from 'react-native'
 import { COLORS } from '@/shared/constant'
 import { style } from './styles'
 
-interface taleList {
-    inDev: string;
-    imageUrl: string,
-    name: string,
-    author: string,
+interface ITaleListProps {
+    inDev: string
+    imageUrl: string
+    name: string
+    author: string
 }
 
-export const Tale = ( { inDev, imageUrl, name, author}: taleList ) => {
+export const Tale = ( { inDev, imageUrl, name, author}: ITaleListProps ) => {
     return (
         <View style={style.container}>
             <Text

@@ -1,18 +1,4 @@
-export {
-  store,
-  useBle,
-  SLICES,
-  patchBoardState,
-  setStatus,
-  setBattery,
-  resetBoard,
-  setTales,
-  setLoading,
-  setError,
-} from './store'
-export type {
-  RootState,
-  AppDispatch,
-  SliceName,
-  Tale,
-} from './store'
+export { store, useBle } from './store'
+export type { RootState, AppDispatch, SliceName } from './store'
+export { patchBoardState, setStatus, setBattery, resetBoard, setTales, setLoading, setError, rootReducer, SLICES } from './slice'
+export type { Tale } from './slice'

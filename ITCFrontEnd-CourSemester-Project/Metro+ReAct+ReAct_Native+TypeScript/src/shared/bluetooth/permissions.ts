@@ -2,6 +2,7 @@ import { PermissionsAndroid, Platform } from 'react-native'
 
 export async function requestBlePermissions(): Promise<boolean> {
   if (Platform.OS !== 'android') return true;
+  
   if (Platform.Version >= 31) {
     const res = await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,

@@ -5,8 +5,7 @@ import { BLE_UUIDS, BoardState } from './types'
 let BleManagerCtor: (new () => BleManagerType) | null = null;
 let managerInstance: BleManagerType | null = null;
 
-if (Platform.OS !== 'web') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+if (Platform.OS !== 'web') {// eslint-disable-next-line @typescript-eslint/no-var-requires
   BleManagerCtor = require('react-native-ble-plx').BleManager;
 }
 
@@ -80,7 +79,6 @@ class BleService {
   private async setupNotifications(dev: Device) {
     this.clearNotifySubs();
 
-    // battery (может быть read-only, тогда notify упадёт — ловим)
     try {
       const batterySub = dev.monitorCharacteristicForService(
         BLE_UUIDS.SERVICE,
@@ -97,7 +95,6 @@ class BleService {
       console.warn('battery monitor failed', e);
     }
 
-    // status / progress
     try {
       const statusSub = dev.monitorCharacteristicForService(
         BLE_UUIDS.SERVICE,
@@ -115,7 +112,6 @@ class BleService {
   }
 
   private parseStatus(s: string) {
-    // Формат "PLAY:12345/60000" или "PAUSE:0/60000"
     const m = s.match(/(PLAY|PAUSE):(\d+)\/(\d+)/);
     if (m) {
       this.emit({

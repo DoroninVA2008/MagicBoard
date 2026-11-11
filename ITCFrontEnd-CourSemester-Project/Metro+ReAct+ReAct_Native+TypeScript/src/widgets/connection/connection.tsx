@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import {
-  View, Text, TouchableOpacity, FlatList, Modal, Alert,
-} from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, Modal, Alert } from 'react-native'
 import { requestBlePermissions } from '@/shared/bluetooth/permissions'
 import { getManager, bleService } from '@/shared/bluetooth/ble'
 import { styles } from '@/shared/bluetooth/styles'
