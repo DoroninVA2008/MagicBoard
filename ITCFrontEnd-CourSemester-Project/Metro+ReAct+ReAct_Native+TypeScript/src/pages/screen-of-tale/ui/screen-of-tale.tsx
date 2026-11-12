@@ -6,7 +6,7 @@ import { BackgroundMoon } from '@/views/background/Moon' // Icons
 import { FavoritesIcon } from '@/views/favorites'
 import GoBackBlack from '@/shared/images/goBack-black.svg'
 import GoBackWhite from '@/shared/images/goBack-white.svg'
-import { styles } from './styles'
+import { styles } from '@/pages/screen-of-tale/ui/styles'
 
 interface taleListProps {
   route: {

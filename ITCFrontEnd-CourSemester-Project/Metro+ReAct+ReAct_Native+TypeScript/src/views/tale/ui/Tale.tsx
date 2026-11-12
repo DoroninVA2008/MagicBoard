@@ -1,6 +1,6 @@
 import { Image, Text, View } from 'react-native'
 import { COLORS } from '@/shared/constant'
-import { style } from './styles'
+import { style } from '@/views/tale/ui/styles'
 
 interface ITaleListProps {
     inDev: string

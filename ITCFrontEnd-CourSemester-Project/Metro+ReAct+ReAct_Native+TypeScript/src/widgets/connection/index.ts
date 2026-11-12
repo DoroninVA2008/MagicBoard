@@ -1,1 +1,1 @@
-export { ConnectionModal } from './connection'
+export { ConnectionModal } from '@/widgets/connection/connection'

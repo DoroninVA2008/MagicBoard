@@ -10,7 +10,7 @@ import { PlayerButton } from '@/widgets/playton'
 import { Footer } from '@/widgets/footer'
 import { useBle } from '@/shared/store'
 import { ConnectionModal } from '@/widgets/connection'
-import { styles } from './styles'
+import { styles } from '@/pages/management/ui/styles'
 
 interface TaleListProps {
   route: {

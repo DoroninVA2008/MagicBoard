@@ -1,1 +1,1 @@
-export { filterTales } from './filput'
+export { filterTales } from '@/shared/filput/filput'

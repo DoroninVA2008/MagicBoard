@@ -1,12 +1,11 @@
-// src/shared/store/store.ts
 import { useEffect, useCallback } from 'react'
 import { AppState } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
-
-import { rootSaga, bleSendCommand, bleSeek } from './sagas'
-import { patchBoardState, rootReducer, SLICES } from './slice' // <--- Добавили SLICES
+import { rootSaga, bleSendCommand, bleSeek } from '@/shared/store/sagas'
+import { patchBoardState, rootReducer, SLICES } from '@/shared/store/slice'
+import { selectBleState } from '@/shared/store/selectors'
 import { bleService } from '@/shared/bluetooth/ble'
 
 const sagaMiddleware = createSagaMiddleware()
@@ -27,7 +26,7 @@ export type AppDispatch = typeof store.dispatch
 export type SliceName = keyof typeof SLICES
 
 export const useBle = () => {
-  const state = useSelector((s: RootState) => s.ble)
+  const state = useSelector(selectBleState)
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {

@@ -6,8 +6,20 @@ import { ScreenOfTale } from '@/pages/screen-of-tale/ui'
 
 type RootStackParamList = {
   HomeScreen: undefined,
-  ManagementScreen: { id: number; inDev: string; imageUrl: string; name: string; author: string },
-  TaleScreen: { id: number; inDev: string; imageUrl: string; name: string; author: string },
+  ManagementScreen: {
+    id: number
+    inDev: string
+    imageUrl: string
+    name: string 
+    author: string
+  },
+  TaleScreen: {
+    id: number
+    inDev: string
+    imageUrl: string
+    name: string
+    author: string
+  },
 };
 
 if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -28,18 +40,9 @@ const Index = () => {
   return (
       <View style={{ flex: 1 }}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="HomeScreen"
-            component={Home}
-          />
-          <Stack.Screen
-            name="ManagementScreen"
-            component={Management}
-          />
-          <Stack.Screen
-            name="TaleScreen"
-            component={ScreenOfTale}
-          />
+          <Stack.Screen name="HomeScreen" component={Home} />
+          <Stack.Screen name="ManagementScreen" component={Management} />
+          <Stack.Screen name="TaleScreen" component={ScreenOfTale} />
         </Stack.Navigator>
       </View>
   )

@@ -5,11 +5,11 @@ import { Tale } from '@/views/tale/ui'
 import { Footer } from '@/widgets/footer'
 import { SearPut } from '@/views/searput/searput'
 import { COLORS } from '@/shared/constant'
-import { useTale } from '../model'
+import { useTale } from '@/pages/home/model'
 import { BackgroundSun } from '@/views/background/Sun'
 import { BackgroundMoon } from '@/views/background/Moon'
 import { filterTales } from '@/shared/filput'
-import { styles } from './styles'
+import { styles } from '@/pages/home/ui/styles'
 
 export default () => {
   const { dataSheet, dataTale } = useTale()

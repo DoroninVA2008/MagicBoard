@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { View, Animated, PanResponder, GestureResponderEvent, PanResponderGestureState } from 'react-native'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
-import { styles, SLIDER_WIDTH } from './styles'
+import { styles } from '@/views/music-slider/styles'
 
 const audioSource = require('@/shared/audios/AllMagicTale.m4a');
 
@@ -14,18 +14,20 @@ interface MusicSliderProps {
   onDurationChange?: (ms: number) => void;
 }
 
+const SLIDER_WIDTH = 300;
 const THUMB_SIZE = 20;
 
 export const MusicSlider: React.FC<MusicSliderProps> = ({
   taleId = 0,
   isActive,
-  duration = 10000,
+  duration = 1000,
   initialProgress = 0,
   onProgressChange,
   onDurationChange,
 }) => {
   const animatedValue = useRef(new Animated.Value(initialProgress)).current;
   const isDragging = useRef(false);
+  const isSeeking = useRef(false);
 
   const progressRef = useRef(initialProgress);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -40,14 +42,14 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
 
   const hasAudio = taleId === 1;
   const actualDuration = hasAudio && status.duration > 0
-    ? status.duration * 1000 
+    ? status.duration * 1000
     : duration;
 
   useEffect(() => {
     onDurationChange?.(actualDuration);
   }, [actualDuration, onDurationChange]);
 
-  // Управление воспроизведением аудио
+  // Управление воспроизведением
   useEffect(() => {
     if (!hasAudio) return;
     if (isActive) {
@@ -57,25 +59,23 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     }
   }, [isActive, hasAudio, player]);
 
+  // Синхронизация с аудио
   useEffect(() => {
-    if (!hasAudio) return; // Для треков без аудио работает таймер
+    // Если мы тянем ползунок или ждем перемотки — не трогаем его
+    if (!hasAudio || isDragging.current || isSeeking.current) return; 
 
-    const updateProgress = () => {
-      if (status.duration > 0) {
-        const ratio = status.currentTime / status.duration;
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-        onProgressChange?.(status.currentTime * 1000);
-      }
-    };
-
-    const interval = setInterval(updateProgress, 100);
-    return () => clearInterval(interval);
+    if (status.duration > 0) {
+      const ratio = status.currentTime / status.duration;
+      animatedValue.setValue(ratio);
+      progressRef.current = ratio;
+      onProgressChange?.(status.currentTime * 1000);
+    }
   }, [status.currentTime, status.duration, hasAudio, onProgressChange, animatedValue]);
 
+  // Таймер для треков БЕЗ аудио
   const startTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (!isActiveRef.current || hasAudio) return; // Если есть аудио, таймер не нужен
+    if (!isActiveRef.current || hasAudio) return;
 
     const startTime = Date.now() - progressRef.current * actualDuration;
 
@@ -116,20 +116,51 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
+      
+      onPanResponderGrant: (evt: GestureResponderEvent) => {
         isDragging.current = true;
+        isSeeking.current = true;
         if (intervalRef.current) clearInterval(intervalRef.current);
+
+        const x = evt.nativeEvent.locationX;
+        const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+        
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
       },
+      
       onPanResponderMove: (_evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         const x = gestureState.moveX - sliderPageX;
         const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+        
+        animatedValue.setValue(ratio);
+        progressRef.current = ratio;
+      },
+      
+      onPanResponderRelease: (evt: GestureResponderEvent) => {
+        const x = evt.nativeEvent.locationX;
+        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
+        if (ratio > 0.99) ratio = 0.99;
 
         animatedValue.setValue(ratio);
         progressRef.current = ratio;
-        seekAudio(ratio * actualDuration);
+
+        const newMs = ratio * actualDuration;
+        onProgressChange?.(newMs);
+        
+        seekAudio(newMs); 
+
+        isDragging.current = false;
+
+        // Ждем 500мс, чтобы плеер обновил currentTime, и только потом снимаем блокировку
+        setTimeout(() => {
+          isSeeking.current = false;
+          if (isActiveRef.current) startTimer();
+        }, 500);
       },
-      onPanResponderRelease: (_evt, gestureState) => {
-        const x = gestureState.moveX - sliderPageX;
+      
+      onPanResponderTerminate: (evt: GestureResponderEvent) => {
+        const x = evt.nativeEvent.locationX;
         let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
         if (ratio > 0.99) ratio = 0.99;
 
@@ -142,27 +173,12 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
 
         isDragging.current = false;
 
-        if (isActiveRef.current) {
-          startTimer();
-        }
-      },
-      onPanResponderTerminate: (_evt, gestureState) => {
-        const x = gestureState.moveX - sliderPageX;
-        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-
-        const newMs = ratio * actualDuration;
-        onProgressChange?.(newMs);
-        seekAudio(newMs);
-
-        isDragging.current = false;
-
-        if (isActiveRef.current) {
-          startTimer();
-        }
+        setTimeout(() => {
+          isSeeking.current = false;
+          if (isActiveRef.current) startTimer();
+        }, 500);
       }
-    }),
+    })
   ).current;
 
   const thumbPosition = animatedValue.interpolate({
@@ -180,7 +196,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
         }}
       >
         <View style={styles.trackBg} />
-
         <Animated.View
           style={[
             styles.progressBar,

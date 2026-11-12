@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text } from 'react-native'
 import { useState, useEffect } from 'react'
-import { styles } from './styles'
+import { styles } from '@/widgets/playton/styles'
 import Inactiveplayer from '@/shared/images/in_active-player.svg'
 import Activeplayer from '@/shared/images/active-player.svg'
 import { MusicSlider } from '@/views/music-slider'
@@ -20,7 +20,7 @@ export const PlayerButton = ({
 }: PlayerButtonProps) => {
   const [localPlaying, setLocalPlaying] = useState<boolean>(isPlaying)
   const [currentTime, setCurrentTime] = useState<number>(0)
-  const [totalDuration, setTotalDuration] = useState<number>(10000)
+  const [totalDuration, setTotalDuration] = useState<number>(1000)
 
   useEffect(() => { setLocalPlaying(isPlaying); }, [isPlaying]);
 
