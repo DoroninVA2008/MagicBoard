@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native'
 import { COLORS } from '@/shared/constant'
 import { text } from '@/shared/styles/Text.styles'
-import { style } from './styles'
+import { style } from '@/widgets/header/styles'
 
 export const Header = () => {
     return (

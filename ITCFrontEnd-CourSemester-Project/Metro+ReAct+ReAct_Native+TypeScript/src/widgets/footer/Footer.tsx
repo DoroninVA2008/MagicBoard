@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Text, TouchableOpacity, View, Button } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { styles } from './styles'
+import { styles } from '@/widgets/footer/styles'
 import Book from '@/shared/images/book.svg'
 import Bluetooth from '@/shared/images/bluetooth.svg'
 

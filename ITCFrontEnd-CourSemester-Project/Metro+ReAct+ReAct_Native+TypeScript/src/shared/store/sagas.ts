@@ -1,7 +1,6 @@
-// src/shared/store/sagas.ts
 import { takeLatest, call, put } from 'redux-saga/effects'
 import { bleService } from '@/shared/bluetooth/ble'
-import { setStatus } from './slice' // <--- Берем из slice, а не из store!
+import { setStatus } from '@/shared/store/slice'
 
 export const BLE_SEND_COMMAND = 'BLE_SEND_COMMAND'
 export const BLE_SEEK = 'BLE_SEEK'
@@ -11,20 +10,17 @@ export const bleSeek = (ms: number) => ({ type: BLE_SEEK, payload: ms })
 
 function* handleSendCommand(action: any): Generator {
   try {
-    const cmd = action.payload
-    yield call(bleService.send, cmd)
+    yield call(bleService.send, action.payload)
   } catch (error) {
-    console.error('Saga: Ошибка отправки команды', error)
-    yield put(setStatus('error'))
+    console.log('Saga: send ignored (no device)')
   }
 }
 
 function* handleSeek(action: any): Generator {
   try {
-    const ms = action.payload
-    yield call(bleService.seek, ms)
+    yield call(bleService.seek, action.payload)
   } catch (error) {
-    console.error('Saga: Ошибка перемотки', error)
+    console.log('Saga: seek ignored (no device)')
   }
 }
 

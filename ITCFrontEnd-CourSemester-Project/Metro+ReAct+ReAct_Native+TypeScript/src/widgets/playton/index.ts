@@ -1,1 +1,1 @@
-export { PlayerButton } from './playton'
+export { PlayerButton } from '@/widgets/playton/playton'

@@ -1,1 +1,1 @@
-export { Tale } from './Tale'
+export { Tale } from '@/views/tale/ui/Tale'

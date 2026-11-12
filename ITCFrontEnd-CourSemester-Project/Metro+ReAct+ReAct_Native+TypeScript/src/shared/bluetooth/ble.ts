@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import type { BleManager as BleManagerType, Device, Subscription } from 'react-native-ble-plx'
-import { BLE_UUIDS, BoardState } from './types'
+import { BLE_UUIDS, BoardState } from '@/shared/bluetooth/types'
 
 let BleManagerCtor: (new () => BleManagerType) | null = null;
 let managerInstance: BleManagerType | null = null;
@@ -122,28 +122,37 @@ class BleService {
     }
   }
 
-  async send(cmd: 'START' | 'PAUSE') {
-    if (!this.device) {
+    async send(cmd: 'START' | 'PAUSE') {
+    // ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА: если доски нет, просто выходим
+    if (!this.device || !this.device.id) {
       console.log('[BLE] send skipped (no device):', cmd);
       return;
     }
-    await this.device.writeCharacteristicWithResponseForService(
-      BLE_UUIDS.SERVICE,
-      BLE_UUIDS.COMMAND_CHAR,
-      btoa(cmd),
-    );
+    try {
+      await this.device.writeCharacteristicWithResponseForService(
+        BLE_UUIDS.SERVICE,
+        BLE_UUIDS.COMMAND_CHAR,
+        btoa(cmd),
+      );
+    } catch (error) {
+      console.warn('[BLE] Ошибка отправки команды:', error);
+    }
   }
 
   async seek(ms: number) {
-    if (!this.device) {
+    if (!this.device || !this.device.id) {
       console.log('[BLE] seek skipped (no device):', ms);
       return;
     }
-    await this.device.writeCharacteristicWithResponseForService(
-      BLE_UUIDS.SERVICE,
-      BLE_UUIDS.COMMAND_CHAR,
-      btoa(`SEEK:${ms}`),
-    );
+    try {
+      await this.device.writeCharacteristicWithResponseForService(
+        BLE_UUIDS.SERVICE,
+        BLE_UUIDS.COMMAND_CHAR,
+        btoa(`SEEK:${ms}`),
+      );
+    } catch (error) {
+      console.warn('[BLE] Ошибка перемотки:', error);
+    }
   }
 
   async disconnect() {

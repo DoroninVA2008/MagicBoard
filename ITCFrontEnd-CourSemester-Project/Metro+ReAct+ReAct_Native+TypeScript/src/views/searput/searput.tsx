@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, TouchableWithoutFeedback } from 'react-native'
-import { styles } from './styles'
+import { styles } from '@/views/searput/styles'
 import { COLORS } from '@/shared/constant'
 import Search from '@/shared/images/lupa.png'
 

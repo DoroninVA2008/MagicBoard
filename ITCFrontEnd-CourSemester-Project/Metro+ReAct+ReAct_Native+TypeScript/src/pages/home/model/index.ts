@@ -1,1 +1,1 @@
-export { useTale } from './use-tale'
+export { useTale } from '@/pages/home/model/use-tale'
