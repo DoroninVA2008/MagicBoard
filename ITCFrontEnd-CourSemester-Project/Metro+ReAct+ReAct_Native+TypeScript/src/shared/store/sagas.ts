@@ -9,19 +9,11 @@ export const bleSendCommand = (cmd: 'START' | 'PAUSE') => ({ type: BLE_SEND_COMM
 export const bleSeek = (ms: number) => ({ type: BLE_SEEK, payload: ms })
 
 function* handleSendCommand(action: any): Generator {
-  try {
-    yield call(bleService.send, action.payload)
-  } catch (error) {
-    console.log('Saga: send ignored (no device)')
-  }
+  yield call(bleService.send, action.payload)
 }
 
 function* handleSeek(action: any): Generator {
-  try {
-    yield call(bleService.seek, action.payload)
-  } catch (error) {
-    console.log('Saga: seek ignored (no device)')
-  }
+  yield call(bleService.seek, action.payload)
 }
 
 export function* rootSaga() {

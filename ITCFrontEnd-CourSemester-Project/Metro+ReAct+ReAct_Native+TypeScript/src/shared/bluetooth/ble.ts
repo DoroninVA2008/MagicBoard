@@ -1,24 +1,7 @@
 import { Platform } from 'react-native'
-import type { BleManager as BleManagerType, Device, Subscription } from 'react-native-ble-plx'
+import type { Device, Subscription } from 'react-native-ble-plx'
 import { BLE_UUIDS, BoardState } from '@/shared/bluetooth/types'
-
-let BleManagerCtor: (new () => BleManagerType) | null = null;
-let managerInstance: BleManagerType | null = null;
-
-if (Platform.OS !== 'web') {// eslint-disable-next-line @typescript-eslint/no-var-requires
-  BleManagerCtor = require('react-native-ble-plx').BleManager;
-}
-
-export function getManager(): BleManagerType {
-  if (Platform.OS === 'web') {
-    throw new Error('Bluetooth недоступен в web. Запускайте на Android.');
-  }
-  if (!managerInstance) {
-    if (!BleManagerCtor) throw new Error('BleManager not available');
-    managerInstance = new BleManagerCtor();
-  }
-  return managerInstance;
-}
+import { getManager, parseStatusPayload } from '@/shared/bluetooth/helpers'
 
 class BleService {
   private device: Device | null = null;
@@ -102,7 +85,8 @@ class BleService {
         (_e, ch) => {
           if (!ch?.value) return;
           const s = atob(ch.value);
-          this.parseStatus(s);
+          const parsed = parseStatusPayload(s);
+          if (parsed) this.emit(parsed);
         },
       );
       this.notifySubs.push(statusSub);
@@ -111,19 +95,7 @@ class BleService {
     }
   }
 
-  private parseStatus(s: string) {
-    const m = s.match(/(PLAY|PAUSE):(\d+)\/(\d+)/);
-    if (m) {
-      this.emit({
-        isPlaying: m[1] === 'PLAY',
-        progress: +m[2],
-        duration: +m[3],
-      });
-    }
-  }
-
-    async send(cmd: 'START' | 'PAUSE') {
-    // ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА: если доски нет, просто выходим
+  async send(cmd: 'START' | 'PAUSE') {
     if (!this.device || !this.device.id) {
       console.log('[BLE] send skipped (no device):', cmd);
       return;
@@ -164,7 +136,9 @@ class BleService {
     this.disconnectSub = null;
     this.clearNotifySubs();
     if (this.device) {
-      try { await this.device.cancelConnection(); } catch { /* noop */ }
+      try { await this.device.cancelConnection(); } catch {
+
+      }
     }
     this.device = null;
     this.emit({ status: 'idle' });

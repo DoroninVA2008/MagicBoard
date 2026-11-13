@@ -36,7 +36,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
   const isActiveRef = useRef(isActive);
   useEffect(() => { isActiveRef.current = isActive }, [isActive]);
 
-  // === ЛОГИКА АУДИО ===
   const player = useAudioPlayer(audioSource);
   const status = useAudioPlayerStatus(player);
 
@@ -49,7 +48,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     onDurationChange?.(actualDuration);
   }, [actualDuration, onDurationChange]);
 
-  // Управление воспроизведением
   useEffect(() => {
     if (!hasAudio) return;
     if (isActive) {
@@ -59,9 +57,7 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     }
   }, [isActive, hasAudio, player]);
 
-  // Синхронизация с аудио
   useEffect(() => {
-    // Если мы тянем ползунок или ждем перемотки — не трогаем его
     if (!hasAudio || isDragging.current || isSeeking.current) return; 
 
     if (status.duration > 0) {
@@ -72,7 +68,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     }
   }, [status.currentTime, status.duration, hasAudio, onProgressChange, animatedValue]);
 
-  // Таймер для треков БЕЗ аудио
   const startTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (!isActiveRef.current || hasAudio) return;
@@ -152,7 +147,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
 
         isDragging.current = false;
 
-        // Ждем 500мс, чтобы плеер обновил currentTime, и только потом снимаем блокировку
         setTimeout(() => {
           isSeeking.current = false;
           if (isActiveRef.current) startTimer();

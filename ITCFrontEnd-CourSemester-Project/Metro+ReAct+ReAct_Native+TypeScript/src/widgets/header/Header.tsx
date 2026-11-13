@@ -7,10 +7,14 @@ export const Header = () => {
     return (
         <View style={styles.container}>
             <View style={styles.box}>
-                <Text style={text.dark}>Индикатор подключения</Text>
+                <Text style={text.dark}>
+                    Индикатор подключения
+                </Text>
             </View>
             <View style={styles.box}>
-                <Text style={text.dark}>Индикатор заряда</Text>
+                <Text style={text.dark}>
+                    Индикатор заряда
+                </Text>
             </View>
         </View>
     );

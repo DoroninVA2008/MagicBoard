@@ -1,6 +1,6 @@
 import { Image, Text, View } from 'react-native'
 import { COLORS } from '@/shared/constant'
-import { style } from '@/views/tale/ui/styles'
+import { styles } from '@/views/tale/ui/styles'
 
 interface ITaleListProps {
     inDev: string
@@ -11,14 +11,14 @@ interface ITaleListProps {
 
 export const Tale = ( { inDev, imageUrl, name, author}: ITaleListProps ) => {
     return (
-        <View style={style.container}>
+        <View style={styles.container}>
             <Text
                 style={{flex: 1, width: '100%', color: COLORS.TEXT}}>
                 {inDev}
             </Text>
             <Image
                 source={{ uri: imageUrl }}
-                style={style.image}
+                style={styles.image}
             />
             <Text
                 style={{flex: 1, width: '100%', color: COLORS.TEXT}}>
