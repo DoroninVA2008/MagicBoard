@@ -1,7 +1,7 @@
 import { Platform } from 'react-native'
 import type { Device, Subscription } from 'react-native-ble-plx'
-import { BLE_UUIDS, BoardState } from '@/shared/bluetooth/types'
-import { getManager, parseStatusPayload } from '@/shared/bluetooth/helpers'
+import { BLE_UUIDS, BoardState } from '@/entities/board/types'
+import { getManager, parseStatusPayload, decodeBase64, encodeBase64 } from '@/shared/bluetooth/helpers'
 
 class BleService {
   private device: Device | null = null;
@@ -68,7 +68,7 @@ class BleService {
         BLE_UUIDS.BATTERY_CHAR,
         (_e, ch) => {
           if (ch?.value) {
-            const v = parseInt(atob(ch.value), 10);
+            const v = parseInt(decodeBase64(ch.value), 10); // <-- Используем хелпер
             if (!Number.isNaN(v)) this.emit({ battery: v });
           }
         },
@@ -84,7 +84,7 @@ class BleService {
         BLE_UUIDS.STATUS_CHAR,
         (_e, ch) => {
           if (!ch?.value) return;
-          const s = atob(ch.value);
+          const s = decodeBase64(ch.value); // <-- Используем хелпер
           const parsed = parseStatusPayload(s);
           if (parsed) this.emit(parsed);
         },
@@ -104,7 +104,7 @@ class BleService {
       await this.device.writeCharacteristicWithResponseForService(
         BLE_UUIDS.SERVICE,
         BLE_UUIDS.COMMAND_CHAR,
-        btoa(cmd),
+        encodeBase64(cmd), // <-- Используем хелпер
       );
     } catch (error) {
       console.warn('[BLE] Ошибка отправки команды:', error);
@@ -120,7 +120,7 @@ class BleService {
       await this.device.writeCharacteristicWithResponseForService(
         BLE_UUIDS.SERVICE,
         BLE_UUIDS.COMMAND_CHAR,
-        btoa(`SEEK:${ms}`),
+        encodeBase64(`SEEK:${ms}`), // <-- Используем хелпер
       );
     } catch (error) {
       console.warn('[BLE] Ошибка перемотки:', error);
@@ -136,9 +136,7 @@ class BleService {
     this.disconnectSub = null;
     this.clearNotifySubs();
     if (this.device) {
-      try { await this.device.cancelConnection(); } catch {
-
-      }
+      try { await this.device.cancelConnection(); } catch { /* noop */ }
     }
     this.device = null;
     this.emit({ status: 'idle' });

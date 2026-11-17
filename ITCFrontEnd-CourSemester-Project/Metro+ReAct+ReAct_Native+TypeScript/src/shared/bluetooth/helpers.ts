@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import type { BleManager as BleManagerType } from 'react-native-ble-plx'
-import type { BoardState } from '@/shared/bluetooth/types'
+import type { BoardState } from '@/entities/board/types'
 
 let BleManagerCtor: (new () => BleManagerType) | null = null;
 let managerInstance: BleManagerType | null = null;
@@ -30,4 +30,22 @@ export function parseStatusPayload(s: string): Partial<BoardState> | null {
     };
   }
   return null;
+}
+
+export function decodeBase64(value: string): string {
+  try {
+    return atob(value);
+  } catch (e) {
+    console.warn('Ошибка декодирования Base64:', e);
+    return '';
+  }
+}
+
+export function encodeBase64(value: string): string {
+  try {
+    return btoa(value);
+  } catch (e) {
+    console.warn('Ошибка кодирования Base64:', e);
+    return '';
+  }
 }

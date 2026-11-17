@@ -6,7 +6,7 @@ import createSagaMiddleware from 'redux-saga'
 import { rootSaga, bleSendCommand, bleSeek } from '@/shared/store/sagas'
 import { patchBoardState, rootReducer, SLICES } from '@/shared/store/slice'
 import { selectBleState } from '@/shared/store/selectors'
-import { bleService } from '@/shared/bluetooth/ble'
+import { bleService } from '@/entities/board/ble'
 
 const sagaMiddleware = createSagaMiddleware()
 

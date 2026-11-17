@@ -1,5 +1,5 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { bleService } from '@/shared/bluetooth/ble'
+import { bleService } from '@/entities/board/ble'
 import { setStatus } from '@/shared/store/slice'
 
 export const BLE_SEND_COMMAND = 'BLE_SEND_COMMAND'
