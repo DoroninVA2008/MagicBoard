@@ -3,10 +3,12 @@ import { AppState } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
-import { rootSaga, bleSendCommand, bleSeek } from '@/shared/store/sagas'
-import { patchBoardState, rootReducer, SLICES } from '@/shared/store/slice'
-import { selectBleState } from '@/shared/store/selectors'
+import type { RootState, AppDispatch, SliceName } from '@/app/store/types'
+import { selectBleState } from '@/app/store/selectors'
+import { patchBoardState, rootReducer, setTales, slices } from '@/app/store/slices'
+import { rootSaga, bleSendCommand, bleSeek } from '@/app/store/sagas'
 import { bleService } from '@/entities/board/ble'
+import { TALES_RESPONSE } from '../../../mocks/db.ts' // /mocks/db.ts
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -20,10 +22,6 @@ export const store = configureStore({
 })
 
 sagaMiddleware.run(rootSaga)
-
-export type RootState = ReturnType<typeof rootReducer>
-export type AppDispatch = typeof store.dispatch
-export type SliceName = keyof typeof SLICES
 
 export const useBle = () => {
   const state = useSelector(selectBleState)
@@ -53,4 +51,22 @@ export const useBle = () => {
   }, [dispatch])
 
   return { ...state, sendCommand, seek }
+}
+
+export const useTale = () => {
+  const { dataSheet, dataTale, loading, error } = useSelector(
+    (s: RootState) => s.tales,
+  )
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    dispatch(
+      setTales({
+        dataSheet: TALES_RESPONSE.header.forName,
+        dataTale: TALES_RESPONSE.tales,
+      }),
+    )
+  }, [dispatch])
+
+  return { dataSheet, dataTale, loading, error }
 }

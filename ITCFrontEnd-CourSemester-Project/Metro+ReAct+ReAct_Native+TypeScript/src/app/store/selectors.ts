@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import type { RootState } from '@/shared/store/store'
+import type { RootState } from '@/app/store/types'
 
 export const selectBleState = (state: RootState) => state.ble
 export const selectBleStatus = (state: RootState) => state.ble.status

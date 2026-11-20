@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import { store } from '@/shared/store'
+import { store } from '@/app/store'
 import { Stack } from 'expo-router'
 
 export default function RootLayout() {

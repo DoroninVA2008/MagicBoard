@@ -1,1 +1,1 @@
-export { SearPut } from './searput'
+export { SearPut } from '@/views/searput/searput'

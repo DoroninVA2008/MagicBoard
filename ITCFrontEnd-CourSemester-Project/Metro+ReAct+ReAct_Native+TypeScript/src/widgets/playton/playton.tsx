@@ -1,8 +1,8 @@
 import { View, TouchableOpacity, Text } from 'react-native'
 import { useState, useEffect } from 'react'
 import { styles } from '@/widgets/playton/styles'
-import Inactiveplayer from '@/shared/images/in_active-player.svg'
-import Activeplayer from '@/shared/images/active-player.svg'
+import Inactiveplayer from '#/images/in_active-player.svg'
+import Activeplayer from '#/images/active-player.svg'
 import { MusicSlider } from '@/views/music-slider'
 
 interface PlayerButtonProps {

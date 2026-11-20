@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'db.json'), 'utf8'));
+const data = JSON.parse(fs.readFileSync(path.join(__dirname, '/mocks/db.json'), 'utf8'));
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

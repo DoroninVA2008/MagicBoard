@@ -1,4 +1,4 @@
-import type { Tale } from '@/shared/data/db'
+import type { Tale } from '/mocks/db.ts'
 
 export const filterTales = (tales: Tale[], query: string): Tale[] => {
   const trimmed = query.trim().toLowerCase();

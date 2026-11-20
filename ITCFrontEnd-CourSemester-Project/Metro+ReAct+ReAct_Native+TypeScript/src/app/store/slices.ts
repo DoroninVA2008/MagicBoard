@@ -52,5 +52,5 @@ const talesSlice = createSlice({
 
 export const { setTales, setLoading, setError } = talesSlice.actions
 
-export const SLICES = { ble: bleSlice.reducer, tales: talesSlice.reducer } as const
-export const rootReducer = combineReducers(SLICES)
+export const slices = { ble: bleSlice.reducer, tales: talesSlice.reducer } as const
+export const rootReducer = combineReducers(slices)

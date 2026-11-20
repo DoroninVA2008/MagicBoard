@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { bleService } from '@/entities/board/ble'
-import { setStatus } from '@/shared/store/slice'
+import { bleService } from '@/entities/board'
+import { setStatus } from '@/app/store/slices'
 
 export const BLE_SEND_COMMAND = 'BLE_SEND_COMMAND'
 export const BLE_SEEK = 'BLE_SEEK'

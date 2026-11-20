@@ -2,9 +2,11 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "baseUrl": "src",
+    "publicUrl": "public",
     "strict": true,
     "paths": {
-      "@/*": [ "./*" ]
+      "@/*": [ "/*" ],
+      "#/*": ["../public/*"]
     }
   },
   "include": [

@@ -3,7 +3,7 @@ import { View, Animated, PanResponder, GestureResponderEvent, PanResponderGestur
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
 import { styles } from '@/views/music-slider/styles'
 
-const audioSource = require('@/shared/audios/AllMagicTale.m4a');
+const audioSource = require('#/audios/AllMagicTale.m4a');
 
 interface MusicSliderProps {
   taleId?: number;

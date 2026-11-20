@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { COLORS } from '@/shared/constant'
+import { COLORS } from '@/constant'
 
 export const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: COLORS.HOME_BACKGROUND_SUN },

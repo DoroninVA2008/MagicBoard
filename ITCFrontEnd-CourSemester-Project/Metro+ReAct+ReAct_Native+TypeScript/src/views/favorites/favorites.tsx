@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { View, TouchableOpacity } from 'react-native'
-import FavoritesUnActive from '@/shared/images/favorites.svg'
-import FavoritesActive from '@/shared/images/favorites-active.svg'
+import FavoritesUnActive from '#/images/favorites.svg'
+import FavoritesActive from '#/images/favorites-active.svg'
 
 export const FavoritesIcon = () => {
     const [isFavorite, setFavorite] = useState(false)

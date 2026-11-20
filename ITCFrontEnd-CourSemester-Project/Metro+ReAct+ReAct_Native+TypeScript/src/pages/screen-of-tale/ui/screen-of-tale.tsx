@@ -1,11 +1,11 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native' // Shared
-import { COLORS } from '@/shared/constant' // Backgrounds
+import { COLORS } from '@/constant' // Backgrounds
 import { BackgroundSun } from '@/views/background/Sun'
 import { BackgroundMoon } from '@/views/background/Moon' // Icons
 import { FavoritesIcon } from '@/views/favorites'
-import GoBackBlack from '@/shared/images/goBack-black.svg'
-import GoBackWhite from '@/shared/images/goBack-white.svg'
+import GoBackBlack from '#/images/goBack-black.svg'
+import GoBackWhite from '#/images/goBack-white.svg'
 import { styles } from '@/pages/screen-of-tale/ui/styles'
 
 interface taleListProps {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setTales, type RootState, type AppDispatch } from '@/shared/store'
-import { TALES_RESPONSE } from '@/shared/datas/db'
+import { setTales, type RootState, type AppDispatch } from '@/app/store'
+import { TALES_RESPONSE } from '../../../../mocks/db.ts' // /mocks/db.ts
 
 export const useTale = () => {
   const { dataSheet, dataTale, loading, error } = useSelector(

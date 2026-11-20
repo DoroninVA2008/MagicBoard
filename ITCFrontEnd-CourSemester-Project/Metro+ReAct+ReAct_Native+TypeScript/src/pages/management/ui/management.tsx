@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import { COLORS } from '@/shared/constant'
+import { COLORS } from '@/constant'
 import { BackgroundSun } from '@/views/background/Sun'
 import { BackgroundMoon } from '@/views/background/Moon'
-import BatteryIcon from '@/shared/images/battery.svg'
-import BluetoothIcon from '@/shared/images/bluetooth.svg'
-import BlueToothIcon from '@/shared/images/bluetooth-icon.svg'
+import BatteryIcon from '#/images/battery.svg'
+import BluetoothIcon from '#/images/bluetooth.svg'
+import BlueToothIcon from '#/images/bluetooth-icon.svg'
 import { PlayerButton } from '@/widgets/playton'
 import { Footer } from '@/widgets/footer'
-import { useBle } from '@/shared/store'
+import { useBle } from '@/app/store'
 import { ConnectionModal } from '@/widgets/connection'
 import { styles } from '@/pages/management/ui/styles'
 
@@ -84,7 +84,7 @@ export const Management = ({ route }: TaleListProps) => {
         <Text style={{ fontSize: 16, fontWeight: '700', color: COLORS.TEXT }}>MagicBoard v2</Text>
 
         <Image
-          source={require('@/shared/images/crasnaya_shapochka-tale.jpg')}
+          source={require('#/images/crasnaya_shapochka-tale.jpg')}
           style={styles.imageBoard}
         />
 

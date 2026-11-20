@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native'
-import { COLORS } from '@/shared/constant'
+import { COLORS } from '@/constant'
 import { text } from '@/shared/styles/Text.styles'
 import { style } from '@/widgets/header/styles'
 
