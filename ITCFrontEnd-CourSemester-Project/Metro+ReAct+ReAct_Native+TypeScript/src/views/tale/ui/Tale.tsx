@@ -9,7 +9,7 @@ interface ITaleListProps {
     author: string
 }
 
-export const Tale = ( { inDev, imageUrl, name, author}: ITaleListProps ) => {
+export const Tale = ({ inDev, imageUrl, name, author }: ITaleListProps) => {
     return (
         <View style={styles.container}>
             <Text

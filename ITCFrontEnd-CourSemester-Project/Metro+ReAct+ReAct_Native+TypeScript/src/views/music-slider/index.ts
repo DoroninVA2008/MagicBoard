@@ -1,1 +1,1 @@
-export { MusicSlider } from './MusicSlider'
+export { MusicSlider } from '@/views/music-slider/MusicSlider'

@@ -1,10 +1,4 @@
-export interface Tale {
-  id: number;
-  inDev: string;
-  imageUrl: string;
-  name: string;
-  author: string;
-}
+import { Tale } from '@/features/tales'
 
 export interface TaleHeader {
   forName: string;
