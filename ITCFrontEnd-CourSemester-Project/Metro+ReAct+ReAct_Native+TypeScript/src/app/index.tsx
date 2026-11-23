@@ -3,24 +3,7 @@ import { View, Platform } from 'react-native'
 import { Home } from '@/pages/home/ui'
 import { Management } from '@/pages/management/ui'
 import { ScreenOfTale } from '@/pages/screen-of-tale/ui'
-
-type RootStackParamList = {
-  HomeScreen: undefined,
-  ManagementScreen: {
-    id: number
-    inDev: string
-    imageUrl: string
-    name: string 
-    author: string
-  },
-  TaleScreen: {
-    id: number
-    inDev: string
-    imageUrl: string
-    name: string
-    author: string
-  },
-};
+import type { RootStackParamList } from '@/app/store'
 
 if (Platform.OS === 'web' && typeof window !== 'undefined') {
   const origError = console.error;

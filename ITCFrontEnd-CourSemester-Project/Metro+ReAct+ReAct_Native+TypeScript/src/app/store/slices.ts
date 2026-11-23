@@ -1,6 +1,6 @@
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { talesSlice } from '@/features/tales'
-import type { BoardState, BleStatus } from '@/shared/bluetooth/types'
+import type { BoardState, BleStatus } from '@/entities/board/types'
 
 const bleInitial: BoardState = {
   status: 'idle',

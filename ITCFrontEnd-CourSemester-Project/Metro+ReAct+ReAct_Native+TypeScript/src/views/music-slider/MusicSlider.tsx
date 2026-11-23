@@ -107,7 +107,7 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     }
   };
 
-  const panResponder = useRef(
+  /* const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
@@ -173,7 +173,7 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
         }, 500);
       }
     })
-  ).current;
+  ).current; */
 
   const thumbPosition = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -184,7 +184,7 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     <View style={styles.container}>
       <View 
         style={styles.sliderTrack} 
-        {...panResponder.panHandlers}
+        // {...panResponder.panHandlers}
         onLayout={(event) => {
           setSliderPageX(event.nativeEvent.layout.x);
         }}
