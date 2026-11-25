@@ -1,14 +1,9 @@
 import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, TouchableWithoutFeedback } from 'react-native'
-import { styles } from '@/views/searput/styles'
 import { COLORS } from '@/constant'
 import Search from '#/images/lupa.png'
-
-interface SearPutProps {
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
-}
+import type { SearPutProps } from '@/views/searput'
+import { styles } from '@/views/searput/styles'
 
 export const SearPut: React.FC<SearPutProps> = ({
   value,

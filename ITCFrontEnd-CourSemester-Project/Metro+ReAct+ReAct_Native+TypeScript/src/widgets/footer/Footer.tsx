@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { type FC } from 'react'
 import { Text, TouchableOpacity, View, Button } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { styles } from '@/widgets/footer/styles'
 import Book from '#/images/book.svg'
 import Bluetooth from '#/images/bluetooth.svg'
 
-export const Footer = () => {
+export const Footer: React.FC = () => {
     const navigation: any = useNavigation()
     const route: any = useRoute()
 

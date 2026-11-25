@@ -6,28 +6,13 @@ import { BackgroundMoon } from '@/views/background/Moon' // Icons
 import { FavoritesIcon } from '@/views/favorites'
 import GoBackBlack from '#/images/goBack-black.svg'
 import GoBackWhite from '#/images/goBack-white.svg'
+import type { taleListProps } from '@/pages/screen-of-tale/ui'
 import { styles } from '@/pages/screen-of-tale/ui/styles'
-
-interface taleListProps {
-  route: {
-    params: {
-        inDev: string;
-        imageUrl: string, 
-        name: string, 
-        author: string,    
-    }
-  }
-}
 
 export const ScreenOfTale = ({ route }: taleListProps) => {
     const { id, inDev, imageUrl, name, author } = route.params
     const navigation: any = useNavigation()
     const dateLogin = new Date().getHours()
-
-    /* storage.set( 'inDev', inDev )
-    storage.set( 'imageUrl', imageUrl )
-    storage.set( 'name', name )
-    storage.set( 'author', author ) */
 
     return (
         <View style={{ flex: 1, 
@@ -43,12 +28,7 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
                 >
                     {(dateLogin < 19 && dateLogin > 7) ? <GoBackBlack/> : <GoBackWhite/> }
                 </TouchableOpacity>
-                {/* <View style={{flexDirection: "row", gap: 20}}> */}
-                    {/* <TouchableOpacity onPress={() => {}}>
-                        <Text style={{fontSize: 34}}>...</Text>
-                    </TouchableOpacity> */}
                 <FavoritesIcon/>
-                {/* </View> */}
             </View>
 
             <View style={{alignItems: 'center', marginTop: 20}}>
@@ -88,7 +68,6 @@ export const ScreenOfTale = ({ route }: taleListProps) => {
                     <Text style={{fontSize: 16, fontWeight: 700, color: COLORS.BUTTON_TEXT}}>Начать</Text>
                 </TouchableOpacity>
             </View>
-        </View>
-        
+        </View>      
     )
 }

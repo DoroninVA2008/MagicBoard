@@ -2,14 +2,8 @@ import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, FlatList, Modal, Alert } from 'react-native'
 import { getManager, bleService } from '@/entities/board/ble'
 import { requestBlePermissions } from '@/shared/bluetooth/permissions'
+import type { Scanned, Props } from '@/widgets/connection/types'
 import { styles } from '@/shared/bluetooth/styles'
-
-interface Props {
-  visible: boolean;
-  onClose: () => void;
-}
-
-type Scanned = { id: string; name: string | null };
 
 export const ConnectionModal = ({ visible, onClose }: Props) => {
   const [devices, setDevices] = useState<Scanned[]>([]);

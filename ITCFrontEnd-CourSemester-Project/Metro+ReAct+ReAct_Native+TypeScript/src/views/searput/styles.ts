@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   containerFocused: {
-    borderColor: 'black',   // если не хочешь менять цвет — убери
+    borderColor: 'black',
   },
   iconContainer: {
     justifyContent: 'center',

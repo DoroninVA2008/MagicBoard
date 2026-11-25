@@ -1,25 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-export interface Tale {
-  id: number
-  inDev: string
-  imageUrl: string
-  name: string
-  author: string
-}
-
-interface TalesState { 
-  dataSheet: string
-  dataTale: Tale[]
-  loading: boolean
-  error: string | null
-}
+import type { Tale, TalesState } from '@/features/tales'
 
 const talesInitial: TalesState = {
-  dataSheet: 'Сказки', 
+  dataSheet: 'Сказки',
   dataTale: [],
-  loading: false, 
-  error: null
+  loading: false,
+  error: null,
 }
 
 export const talesSlice = createSlice({
@@ -32,7 +18,14 @@ export const talesSlice = createSlice({
       state.loading = false
       state.error = null
     },
-    setLoading(state, action: PayloadAction<boolean>) { state.loading = action.payload },
-    setError(state, action: PayloadAction<string | null>) { state.error = action.payload; state.loading = false },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload
+    },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload
+      state.loading = false
+    },
   },
 })
+
+export const { setTales, setLoading, setError } = talesSlice.actions

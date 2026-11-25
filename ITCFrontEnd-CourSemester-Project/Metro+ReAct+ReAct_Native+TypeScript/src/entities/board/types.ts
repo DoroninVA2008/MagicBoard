@@ -17,4 +17,4 @@ export type BoardState = {
   deviceName?: string
 }
 
-export type Command = 'START' | 'PAUSE' | 'SEEK'
+// export type Command = 'START' | 'PAUSE' | 'SEEK'

@@ -68,7 +68,7 @@ class BleService {
         BLE_UUIDS.BATTERY_CHAR,
         (_e, ch) => {
           if (ch?.value) {
-            const v = parseInt(decodeBase64(ch.value), 10); // <-- Используем хелпер
+            const v = parseInt(decodeBase64(ch.value), 10);
             if (!Number.isNaN(v)) this.emit({ battery: v });
           }
         },
@@ -84,7 +84,7 @@ class BleService {
         BLE_UUIDS.STATUS_CHAR,
         (_e, ch) => {
           if (!ch?.value) return;
-          const s = decodeBase64(ch.value); // <-- Используем хелпер
+          const s = decodeBase64(ch.value);
           const parsed = parseStatusPayload(s);
           if (parsed) this.emit(parsed);
         },

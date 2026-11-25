@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import React, { type FC, useState } from 'react'
 import { View, TouchableOpacity } from 'react-native'
 import FavoritesUnActive from '#/images/favorites.svg'
 import FavoritesActive from '#/images/favorites-active.svg'
 
-export const FavoritesIcon = () => {
+export const FavoritesIcon: React.FC = () => {
     const [isFavorite, setFavorite] = useState(false)
 
     return (

@@ -1,6 +1,6 @@
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { talesSlice } from '@/features/tales'
-import type { BoardState, BleStatus } from '@/entities/board/types'
+import type { BoardState, BleStatus } from '@/entities/board'
 
 const bleInitial: BoardState = {
   status: 'idle',
@@ -31,7 +31,9 @@ const bleSlice = createSlice({
 
 export const { patchBoardState, setStatus, setBattery, resetBoard } = bleSlice.actions
 
-export const { setTales, setLoading, setError } = talesSlice.actions
+export const slices = {
+  ble: bleSlice.reducer,
+  tales: talesSlice.reducer,
+} as const
 
-export const slices = { ble: bleSlice.reducer, tales: talesSlice.reducer } as const
 export const rootReducer = combineReducers(slices)

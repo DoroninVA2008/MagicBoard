@@ -1,14 +1,5 @@
 import { Tale } from '@/features/tales'
-
-export interface TaleHeader {
-  forName: string;
-  linkAll: string;
-}
-
-export interface TalesResponse {
-  header: TaleHeader;
-  tales: Tale[];
-}
+import type { TaleHeader, TalesResponse } from '@/app/store'
 
 const RAW_TALES = [
   {
@@ -44,7 +35,6 @@ export const TALES_RESPONSE: TalesResponse = {
     (item) => 'id' in item && 'imageUrl' in item && 'name' in item,
   ) as Tale[],
 };
-
 export const TALES_DATA: Tale[] = TALES_RESPONSE.tales;
 export const TALES_HEADER: TaleHeader = TALES_RESPONSE.header;
 export const TALES_HEADER_NAME: string = TALES_RESPONSE.header.forName;

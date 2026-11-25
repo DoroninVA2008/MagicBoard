@@ -10,19 +10,8 @@ import { PlayerButton } from '@/widgets/playton'
 import { Footer } from '@/widgets/footer'
 import { useBle } from '@/app/store'
 import { ConnectionModal } from '@/widgets/connection'
+import type { TaleListProps } from '@/pages/management/ui'
 import { styles } from '@/pages/management/ui/styles'
-
-interface TaleListProps {
-  route: {
-    params?: {
-      id: number;
-      inDev: string;
-      imageUrl: string;
-      name: string;
-      author: string;
-    };
-  };
-}
 
 export const Management = ({ route }: TaleListProps) => {
   const {

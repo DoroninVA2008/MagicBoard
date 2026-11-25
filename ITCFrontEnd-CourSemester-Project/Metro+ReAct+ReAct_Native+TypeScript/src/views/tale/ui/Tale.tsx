@@ -1,13 +1,7 @@
 import { Image, Text, View } from 'react-native'
 import { COLORS } from '@/constant'
 import { styles } from '@/views/tale/ui/styles'
-
-interface ITaleListProps {
-    inDev: string
-    imageUrl: string
-    name: string
-    author: string
-}
+import type { ITaleListProps } from '@/views/tale/ui'
 
 export const Tale = ({ inDev, imageUrl, name, author }: ITaleListProps) => {
     return (

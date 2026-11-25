@@ -1,19 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { View, Animated, PanResponder, GestureResponderEvent, PanResponderGestureState } from 'react-native'
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio'
+import type { MusicSliderProps } from '@/views/music-slider'
 import { styles } from '@/views/music-slider/styles'
 
 const audioSource = require('#/audios/AllMagicTale.m4a');
-
-interface MusicSliderProps {
-  taleId?: number;
-  isActive: boolean;
-  duration: number;
-  initialProgress?: number;
-  onProgressChange?: (ms: number) => void;
-  onDurationChange?: (ms: number) => void;
-}
-
 const SLIDER_WIDTH = 300;
 const THUMB_SIZE = 20;
 
@@ -107,74 +98,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     }
   };
 
-  /* const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      
-      onPanResponderGrant: (evt: GestureResponderEvent) => {
-        isDragging.current = true;
-        isSeeking.current = true;
-        if (intervalRef.current) clearInterval(intervalRef.current);
-
-        const x = evt.nativeEvent.locationX;
-        const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
-        
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-      },
-      
-      onPanResponderMove: (_evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        const x = gestureState.moveX - sliderPageX;
-        const ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
-        
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-      },
-      
-      onPanResponderRelease: (evt: GestureResponderEvent) => {
-        const x = evt.nativeEvent.locationX;
-        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
-        if (ratio > 0.99) ratio = 0.99;
-
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-
-        const newMs = ratio * actualDuration;
-        onProgressChange?.(newMs);
-        
-        seekAudio(newMs); 
-
-        isDragging.current = false;
-
-        setTimeout(() => {
-          isSeeking.current = false;
-          if (isActiveRef.current) startTimer();
-        }, 500);
-      },
-      
-      onPanResponderTerminate: (evt: GestureResponderEvent) => {
-        const x = evt.nativeEvent.locationX;
-        let ratio = Math.max(0, Math.min(1, x / SLIDER_WIDTH));
-        if (ratio > 0.99) ratio = 0.99;
-
-        animatedValue.setValue(ratio);
-        progressRef.current = ratio;
-
-        const newMs = ratio * actualDuration;
-        onProgressChange?.(newMs);
-        seekAudio(newMs);
-
-        isDragging.current = false;
-
-        setTimeout(() => {
-          isSeeking.current = false;
-          if (isActiveRef.current) startTimer();
-        }, 500);
-      }
-    })
-  ).current; */
-
   const thumbPosition = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, SLIDER_WIDTH - THUMB_SIZE],
@@ -184,7 +107,6 @@ export const MusicSlider: React.FC<MusicSliderProps> = ({
     <View style={styles.container}>
       <View 
         style={styles.sliderTrack} 
-        // {...panResponder.panHandlers}
         onLayout={(event) => {
           setSliderPageX(event.nativeEvent.layout.x);
         }}

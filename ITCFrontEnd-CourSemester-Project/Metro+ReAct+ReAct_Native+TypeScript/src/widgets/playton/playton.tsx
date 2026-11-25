@@ -1,18 +1,12 @@
+import React, { type FC, useState, useEffect } from 'react'
 import { View, TouchableOpacity, Text } from 'react-native'
-import { useState, useEffect } from 'react'
+import { MusicSlider } from '@/views/music-slider'
+export type { PlayerButtonProps } from '@/widgets/playton'
 import { styles } from '@/widgets/playton/styles'
 import Inactiveplayer from '#/images/in_active-player.svg'
 import Activeplayer from '#/images/active-player.svg'
-import { MusicSlider } from '@/views/music-slider'
 
-interface PlayerButtonProps {
-  taleId?: number;
-  onCommand?: (cmd: string) => void;
-  onSeek?: (ms: number) => void;
-  isPlaying?: boolean;
-}
-
-export const PlayerButton = ({
+export const PlayerButton: React.FC = ({
   taleId = 0,
   onCommand,
   onSeek,
