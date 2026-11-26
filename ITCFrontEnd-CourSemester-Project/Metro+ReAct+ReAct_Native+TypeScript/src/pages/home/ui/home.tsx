@@ -5,14 +5,14 @@ import { Tale } from '@/views/tale/ui'
 import { Footer } from '@/widgets/footer'
 import { SearPut } from '@/views/searput'
 import { COLORS } from '@/constant'
-import { useTale } from '@/features/tales'
+import { TalesFeature } from '@/features/tales'
 import { BackgroundSun } from '@/views/background/Sun'
 import { BackgroundMoon } from '@/views/background/Moon'
 import { filterTales } from '@/shared/filput'
 import { styles } from '@/pages/home/ui/styles'
 
 export default () => {
-  const { dataSheet, dataTale } = useTale()
+  const { dataSheet, dataTale } = TalesFeature.useTale()
   const navigation = useNavigation<any>()
   const dateLogin = new Date().getHours()
 

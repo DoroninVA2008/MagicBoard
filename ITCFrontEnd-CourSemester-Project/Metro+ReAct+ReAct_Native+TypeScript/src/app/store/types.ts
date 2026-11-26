@@ -1,4 +1,5 @@
-import { store, rootReducer, slices } from '@/app/store'
+import { store } from '@/app/store/store'
+import { rootReducer, slices } from '@/app/store/slices'
 
 export type RootState = ReturnType<typeof rootReducer>
 export type AppDispatch = typeof store.dispatch

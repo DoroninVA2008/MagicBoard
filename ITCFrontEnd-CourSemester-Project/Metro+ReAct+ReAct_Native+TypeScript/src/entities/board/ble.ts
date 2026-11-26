@@ -3,64 +3,26 @@ import type { Device, Subscription } from 'react-native-ble-plx'
 import { BLE_UUIDS, BoardState } from '@/entities/board/types'
 import { getManager, parseStatusPayload, decodeBase64, encodeBase64 } from '@/shared/bluetooth/helpers'
 
-class BleService {
-  private device: Device | null = null;
-  private deviceId: string | null = null;
-  private reconnectAttempts = 0;
-  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-  private listeners = new Set<(s: Partial<BoardState>) => void>();
-  private disconnectSub: Subscription | null = null;
-  private notifySubs: Subscription[] = [];
+export function BleService() {
+  let device: Device | null = null;
+  let deviceId: string | null = null;
+  let reconnectAttempts = 0;
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  const listeners = new Set<(s: Partial<BoardState>) => void>();
+  let disconnectSub: Subscription | null = null;
+  let notifySubs: Subscription[] = [];
 
-  subscribe(cb: (s: Partial<BoardState>) => void) {
-    this.listeners.add(cb);
-    return () => { this.listeners.delete(cb); };
-  }
+  const emit = (s: Partial<BoardState>) => {
+    listeners.forEach((l) => l(s));
+  };
 
-  private emit(s: Partial<BoardState>) {
-    this.listeners.forEach((l) => l(s));
-  }
+  const clearNotifySubs = () => {
+    notifySubs.forEach((s) => s.remove());
+    notifySubs = [];
+  };
 
-  async connectById(id: string) {
-    this.deviceId = id;
-    this.emit({ status: 'connecting' });
-    try {
-      await this.attachToDevice(id);
-      this.emit({ status: 'connected', deviceName: this.device?.name ?? undefined });
-      this.reconnectAttempts = 0;
-    } catch (e) {
-      console.warn('connectById failed', e);
-      this.emit({ status: 'error' });
-      this.scheduleReconnect();
-    }
-  }
-
-  private async attachToDevice(id: string) {
-    const manager = getManager();
-    const dev = await manager.connectToDevice(id, { timeout: 10000 });
-    await dev.discoverAllServicesAndCharacteristics();
-    this.device = dev;
-    await this.setupNotifications(dev);
-    this.setupDisconnectHandler(dev);
-  }
-
-  private setupDisconnectHandler(dev: Device) {
-    this.disconnectSub?.remove();
-    this.disconnectSub = dev.onDisconnected(() => {
-      this.emit({ status: 'disconnected' });
-      this.device = null;
-      this.clearNotifySubs();
-      this.scheduleReconnect();
-    });
-  }
-
-  private clearNotifySubs() {
-    this.notifySubs.forEach((s) => s.remove());
-    this.notifySubs = [];
-  }
-
-  private async setupNotifications(dev: Device) {
-    this.clearNotifySubs();
+  const setupNotifications = async (dev: Device) => {
+    clearNotifySubs();
 
     try {
       const batterySub = dev.monitorCharacteristicForService(
@@ -69,11 +31,11 @@ class BleService {
         (_e, ch) => {
           if (ch?.value) {
             const v = parseInt(decodeBase64(ch.value), 10);
-            if (!Number.isNaN(v)) this.emit({ battery: v });
+            if (!Number.isNaN(v)) emit({ battery: v });
           }
         },
       );
-      this.notifySubs.push(batterySub);
+      notifySubs.push(batterySub);
     } catch (e) {
       console.warn('battery monitor failed', e);
     }
@@ -86,86 +48,144 @@ class BleService {
           if (!ch?.value) return;
           const s = decodeBase64(ch.value);
           const parsed = parseStatusPayload(s);
-          if (parsed) this.emit(parsed);
+          if (parsed) emit(parsed);
         },
       );
-      this.notifySubs.push(statusSub);
+      notifySubs.push(statusSub);
     } catch (e) {
       console.warn('status monitor failed', e);
     }
-  }
+  };
 
-  async send(cmd: 'START' | 'PAUSE') {
-    if (!this.device || !this.device.id) {
+  const setupDisconnectHandler = (dev: Device) => {
+    disconnectSub?.remove();
+    disconnectSub = dev.onDisconnected(() => {
+      emit({ status: 'disconnected' });
+      device = null;
+      clearNotifySubs();
+      scheduleReconnect();
+    });
+  };
+
+  const attachToDevice = async (id: string) => {
+    const manager = getManager();
+    const dev = await manager.connectToDevice(id, { timeout: 10000 });
+    await dev.discoverAllServicesAndCharacteristics();
+    device = dev;
+    await setupNotifications(dev);
+    setupDisconnectHandler(dev);
+  };
+
+  const scheduleReconnect = () => {
+    if (reconnectTimer) return;
+    if (!deviceId) return;
+    if (Platform.OS === 'web') return;
+
+    const delay = Math.min(2000 * 2 ** reconnectAttempts, 30000);
+    reconnectAttempts += 1;
+
+    reconnectTimer = setTimeout(async () => {
+      reconnectTimer = null;
+      try {
+        await attachToDevice(deviceId!);
+        emit({ status: 'connected' });
+        reconnectAttempts = 0;
+      } catch {
+        scheduleReconnect();
+      }
+    }, delay);
+  };
+
+  const subscribe = (cb: (s: Partial<BoardState>) => void) => {
+    listeners.add(cb);
+    return () => {
+      listeners.delete(cb);
+    };
+  };
+
+  const connectById = async (id: string) => {
+    deviceId = id;
+    emit({ status: 'connecting' });
+    try {
+      await attachToDevice(id);
+      emit({ status: 'connected', deviceName: device?.name ?? undefined });
+      reconnectAttempts = 0;
+    } catch (e) {
+      console.warn('connectById failed', e);
+      emit({ status: 'error' });
+      scheduleReconnect();
+    }
+  };
+
+  const send = async (cmd: 'START' | 'PAUSE') => {
+    if (!device || !device.id) {
       console.log('[BLE] send skipped (no device):', cmd);
       return;
     }
     try {
-      await this.device.writeCharacteristicWithResponseForService(
+      await device.writeCharacteristicWithResponseForService(
         BLE_UUIDS.SERVICE,
         BLE_UUIDS.COMMAND_CHAR,
-        encodeBase64(cmd), // <-- Используем хелпер
+        encodeBase64(cmd),
       );
     } catch (error) {
       console.warn('[BLE] Ошибка отправки команды:', error);
     }
-  }
+  };
 
-  async seek(ms: number) {
-    if (!this.device || !this.device.id) {
+  const seek = async (ms: number) => {
+    if (!device || !device.id) {
       console.log('[BLE] seek skipped (no device):', ms);
       return;
     }
     try {
-      await this.device.writeCharacteristicWithResponseForService(
+      await device.writeCharacteristicWithResponseForService(
         BLE_UUIDS.SERVICE,
         BLE_UUIDS.COMMAND_CHAR,
-        encodeBase64(`SEEK:${ms}`), // <-- Используем хелпер
+        encodeBase64(`SEEK:${ms}`),
       );
     } catch (error) {
       console.warn('[BLE] Ошибка перемотки:', error);
     }
-  }
+  };
 
-  async disconnect() {
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
+  const disconnect = async () => {
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
     }
-    this.disconnectSub?.remove();
-    this.disconnectSub = null;
-    this.clearNotifySubs();
-    if (this.device) {
-      try { await this.device.cancelConnection(); } catch { /* noop */ }
-    }
-    this.device = null;
-    this.emit({ status: 'idle' });
-  }
-
-  onAppResume() {
-    if (!this.device || !this.deviceId) return;
-    this.device.isConnected()
-      .then((ok: boolean) => { if (!ok) this.scheduleReconnect(); })
-      .catch(() => this.scheduleReconnect());
-  }
-
-  private scheduleReconnect() {
-    if (this.reconnectTimer) return;
-    if (!this.deviceId) return;
-    if (Platform.OS === 'web') return;
-    const delay = Math.min(2000 * 2 ** this.reconnectAttempts, 30000);
-    this.reconnectAttempts += 1;
-    this.reconnectTimer = setTimeout(async () => {
-      this.reconnectTimer = null;
+    disconnectSub?.remove();
+    disconnectSub = null;
+    clearNotifySubs();
+    if (device) {
       try {
-        await this.attachToDevice(this.deviceId!);
-        this.emit({ status: 'connected' });
-        this.reconnectAttempts = 0;
+        await device.cancelConnection();
       } catch {
-        this.scheduleReconnect();
+        /* noop */
       }
-    }, delay);
-  }
+    }
+    device = null;
+    emit({ status: 'idle' });
+  };
+
+  const onAppResume = () => {
+    if (!device || !deviceId) return;
+    device
+      .isConnected()
+      .then((ok: boolean) => {
+        if (!ok) scheduleReconnect();
+      })
+      .catch(() => scheduleReconnect());
+  };
+
+  return {
+    subscribe,
+    connectById,
+    send,
+    seek,
+    disconnect,
+    onAppResume,
+  };
 }
 
-export const bleService = new BleService();
+export const bleService = BleService();

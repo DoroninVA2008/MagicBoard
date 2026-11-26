@@ -1,6 +1,6 @@
-export { bleService } from '@/entities/board/ble'
+import { bleService } from '@/entities/board/ble'
 export * from '@/entities/board/types'
 
 export const BleEntity = {
-    
+  ...bleService,
 }
